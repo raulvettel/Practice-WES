@@ -31,7 +31,8 @@ $(function () {
   var promises = [
     View.loadPartial('nav-partial'),
     View.loadPartial('car-partial'),
-    View.loadPartial('footer-partial')
+    View.loadPartial('footer-partial'),
+    View.loadPartial('cart-partial')
   ];
   Promise.all(promises)
     .then(function () {

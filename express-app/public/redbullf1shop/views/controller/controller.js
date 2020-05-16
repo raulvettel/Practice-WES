@@ -11,6 +11,9 @@ Controller.router.route = function () {
     Controller.controllers.index.refresh();
   } else if (matching = path.match(/^\/redbullf1shop\/views\/signin$/)) {
     Controller.controllers.signin.refresh();
+  }
+  else if (matching = path.match(/^\/redbullf1shop\/views\/cart$/)) {
+    Controller.controllers.cart.refresh();
   } else {
     console.error('Page not found!');
   }
