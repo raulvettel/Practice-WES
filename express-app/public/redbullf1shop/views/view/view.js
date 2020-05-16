@@ -33,7 +33,8 @@ $(function () {
     View.loadPartial('car-partial'),
     View.loadPartial('footer-partial'),
     View.loadPartial('cart-partial'),
-    View.loadPartial('profile-partial')
+    View.loadPartial('profile-partial'),
+    View.loadPartial('purchase-partial')
   ];
   Promise.all(promises)
     .then(function () {
