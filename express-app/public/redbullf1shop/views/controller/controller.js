@@ -20,6 +20,9 @@ Controller.router.route = function () {
   }
   else if (matching = path.match(/^\/redbullf1shop\/views\/purchase$/)) {
     Controller.controllers.profile.refresh();
+  }
+  else if (matching = path.match(/^\/redbullf1shop\/views\/signup$/)) {
+    Controller.controllers.signup.refresh();
   } else {
     console.error('Page not found!');
   }
