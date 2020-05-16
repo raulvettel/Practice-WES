@@ -5,7 +5,7 @@ Controller.controllers.index.refresh = function (matching) {
   Model.getCars()
   .then(function(cars){
   context.cars = cars;
-  View.renderer.index.render({});
+  View.renderer.index.render(context);
   });
 }
 

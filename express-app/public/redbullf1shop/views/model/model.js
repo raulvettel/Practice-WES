@@ -1,7 +1,6 @@
 var Model = {}
 
 Model.cars = [{
-
     id: '0',
     name: 'RB 7',
     description: 'The Red Bull RB7 is a Formula One racing car designed by the Red Bull Racing team for the 2011 Formula One season. It was driven by defending champion Sebastian Vettel and Australian driver Mark Webber. The car was launched at the Circuit Ricardo Tormo in Valencia, Spain on 1 February 2011. Sebastian Vettel was the first driver to test the car.',
@@ -65,7 +64,7 @@ Model.getCars = function () {
     });
 }
         
-Model.getBook = function (id) {
+Model.getCar = function (id) {
     return new Promise(function (resolve, reject) {
     setTimeout(function () {
     var i = 0;
