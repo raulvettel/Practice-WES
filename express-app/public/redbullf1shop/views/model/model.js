@@ -1,5 +1,13 @@
 var Model = {}
 
+Model.cars2 = [{
+    id: '0',
+    name: 'RB 7',
+    description: 'The Red Bull RB7 is a Formula One racing car designed by the Red Bull Racing team for the 2011 Formula One season. It was driven by defending champion Sebastian Vettel and Australian driver Mark Webber. The car was launched at the Circuit Ricardo Tormo in Valencia, Spain on 1 February 2011. Sebastian Vettel was the first driver to test the car.',
+    price: 500,
+    url: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/F1_2011_Test_Jerez_20.jpg'
+    }];
+
 Model.cars = [{
     id: '0',
     name: 'RB 7',
@@ -32,7 +40,7 @@ Model.cars = [{
     id: '4',
     name: 'RB 11',
     description: 'The Red Bull RB11 is a Formula One racing car designed by Adrian Newey for Infiniti Red Bull Racing to compete in the 2015 Formula One season. It was driven by Daniel Ricciardo and Daniil Kvyat. This was the last Red Bull car with engines originally badged as "Renault" and to feature their title sponsor Infiniti as they split from Red Bull at the end of the season due to a breakdown in the teamss relationship with Renault. The RB11 was launched on 1 February 2015. During pre-season testing, the car ran a camouflage livery – akin to pre-production cars – before the team reverted to their normal livery for the race season.',
-    price: 400,
+    price: 450,
     url: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Daniel_Ricciardo_2015_Malaysia_FP3.jpg' 
     },
     {
@@ -46,7 +54,7 @@ Model.cars = [{
     id: '6',
     name: 'RB 13',
     description: 'The Red Bull RB13 is a Formula One racing car designed and constructed by Red Bull Racing to compete during the 2017 FIA Formula One World Championship. The car was driven by Daniel Ricciardo and Max Verstappen. It made its competitive debut at the 2017 Australian Grand Prix.',
-    price: 500,
+    price: 550,
     url: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Max_Verstappen_2017_Malaysia_FP2.jpg' 
     },
     {id: '7',
@@ -77,26 +85,35 @@ Model.getCar = function (id) {
     });
 }
 
-Model.users = [{
-    id: '0', 
-    name: 'Raul',
-    surname: 'Alarcon',
-    email: 'raul@test.es',
-    birth: 1997-30-05,
-    address: 'Albacete',
-    password: 'admin'
-}];
 
-Model.user= [{
-    id: '0'
-}]
 
-Model.shoppingCart = [{
-    userId: '0',
-    subtotal: 0.00,
-    tax: 21.00,
-    total: 0.00
-}];
+Model.users = [];
+
+Model.user= [{}]
+
+Model.signin = function (email, password){
+    return new Promise(function (resolve, reject){
+        setTimeout(function () {
+            var i = 0;
+            while (i < Model.users.length){
+                if (Model.users[i].email == email && Model.users[i].password == password){
+                    Model.user[0].id = Model.users[i].id;
+                    resolve(Controller.controllers.index.refresh())
+                    console.log('User ok')
+                    break;
+                }
+                else if (i == Model.users.length -1){
+                    reject('User not found');
+                    Controller.controllers.signin.refresh();
+                }
+                i++;
+            } 
+
+        }, 1000);
+    });
+}
+
+Model.shoppingCart = [];
 
 Model.getUser = function (id) {
     return new Promise(function (resolve, reject) {
@@ -104,7 +121,7 @@ Model.getUser = function (id) {
     var i = 0;
     while (i < Model.users.length && Model.users[i].id != id) i++;
     if (i < Model.users.length)
-    resolve(Model.users[i])
+    resolve(Model.user[i])
     else
     reject('User not found');
     }, 1000);
@@ -119,16 +136,110 @@ Model.getShoppingCart = function () {
     });
 }
 
+Model.counter = 0;
+
+Model.item = [];
+
 Model.buy = function (pid) {
-    info = Model.getCar(pid)
-    carro = Model.getShoppingCart()
-    .then(function (shoppingCart){
+    Model.getCar(pid).then(function(result){
+        info = result
+        Model.getShoppingCart().then(function(result){
+            carro = result[0]
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                carro.subtotal = carro.subtotal + info.price;
+                carro.total = carro.total + (carro.tax * info.price);
+                var i = 0;
+                if (Model.item.length < 1){
+                    Model.item.push({
+                        idCarro : carro.userId,
+                        pid : info.name,
+                        qty : 1,
+                        total : info.price,
+                        price: info.price
+                    })
+                }
+                else{
+                    while (i < Model.item.length){
+                        if (Model.item[i].price == info.price){
+                            Model.item[i].qty += 1;
+                            Model.item[i].total = Model.item[i].qty * info.price
+                            break;
+                        }
+                        else if(i == Model.item.length-1 && Model.item[i].price != info.price){
+                            Model.item.push({
+                                idCarro : carro.userId,
+                                pid : info.name,
+                                qty : 1,
+                                total : info.price,
+                                price: info.price
+                            })
+                            break;
+                        }
+                        i++;
+                    }
+                }
+
+                console.log(Model.item)
+                resolve(carro);
+                console.log(carro)
+                }, 1000);
+                });   
+        });
+    });
+}
+
+Model.cartItemCount = function(){
     return new Promise(function (resolve, reject) {
-    setTimeout(function () {
-    shoppingCart.push(carro.subtotal = carro.subtotal + info.price);
-    shoppingCart.push(carro.total = carro.total + (carro.tax * info.price));
-    resolve(shoppingCart);
-    }, 1000);
-    });   
-    })
+        setTimeout(function () {
+        Model.counter += 1;
+        Model.counter.innerHTML="String"
+        resolve(Model.counter)
+        }, 1000);
+        });
+}
+
+Model.signup = function(userInfo){
+    var x = false;
+    return new Promise(function (resolve, reject) {
+        if (userInfo.name.length < 1 || userInfo.address.length < 1 || userInfo.birth.length < 1 || userInfo.email.length < 1 ||
+            userInfo.surname.length < 1 || userInfo.password.length < 1 || userInfo.password2.length < 1){
+                reject('All fields must be completed');
+                Controller.controllers.signup.refresh();
+                x = true;
+            }
+        var i = 0
+        while (i < Model.users.length){
+            if (Model.users[i].email == userInfo.email){
+                reject('This email is already exits');
+                Controller.controllers.signup.refresh();
+                x = true;
+            }
+            i++;
+        }
+        if(userInfo.password != userInfo.password2){
+            reject('Passwords dont match')
+            Controller.controllers.signup.refresh();
+            x = true;
+        }
+        if(x == false){
+            Model.users.push({
+                id: Date.now(), 
+                name: userInfo.name,
+                surname: userInfo.surname,
+                email: userInfo.email,
+                birth: userInfo.birth,
+                address: userInfo.address,
+                password: userInfo.password
+            })
+            Model.shoppingCart.push({
+                userId: Date.now(),
+                subtotal: 0.00,
+                tax: 1.21,
+                total: 0.00
+            })
+            console.log(Model.shoppingCart)
+            resolve(Controller.controllers.signin.refresh())
+        }
+    });
 }

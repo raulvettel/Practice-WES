@@ -19,7 +19,7 @@ Controller.router.route = function () {
     Controller.controllers.profile.refresh();
   }
   else if (matching = path.match(/^\/redbullf1shop\/views\/purchase$/)) {
-    Controller.controllers.profile.refresh();
+    Controller.controllers.purchase.refresh();
   }
   else if (matching = path.match(/^\/redbullf1shop\/views\/signup$/)) {
     Controller.controllers.signup.refresh();

@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md fixed-top navbar-light bg-light">
-      <a class="navbar-brand" href="index">Red Bull F1 Shop</a>
+      <a class="navbar-brand" onclick="Controller.controllers.index.refresh();">Red Bull F1 Shop</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
         aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -10,18 +10,18 @@
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="dropdown01"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shopping Cart&nbsp;<span class="badge badge-dark">0</span></a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="cart">Show Cart</a>
-              <a class="dropdown-item" href="purchase">Purchase</a>
+              <a class="dropdown-item" onclick = "Controller.controllers.cart.refresh();">Show Cart</a>
+              <a class="dropdown-item" onclick = "Controller.controllers.purchase.refresh();">Purchase</a>
             </div>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="dropdown01"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User Management&nbsp;</a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="signin">Sign In</a>
-              <a class="dropdown-item" href="index">Sign Out</a>
-              <a class="dropdown-item" href="signup">Sign Up</a>
-              <a class="dropdown-item" href="profile">Profile</a>
+              <a class="dropdown-item" onclick = "Controller.controllers.signin.refresh();">Sign In</a>
+              <a class="dropdown-item" onclick = "Controller.controllers.index.refresh();">Sign Out</a>
+              <a class="dropdown-item" onclick = "Controller.controllers.signup.refresh();">Sign Up</a>
+              <a class="dropdown-item" onclick = "Controller.controllers.profile.refresh();">Profile</a>
             </div>
           </li>
         </ul>

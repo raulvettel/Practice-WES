@@ -7,3 +7,9 @@ Controller.controllers.signin.goToIndex_clicked=function(event){
   Controller.router.go(event.target.href);
 }
 
+Controller.controllers.signin.function = function(event){
+  event.preventDefault();
+  email = $('#email').val();
+  password = $('#password').val();
+  Model.signin(email,password);
+}

@@ -1,3 +1,4 @@
+<script>console.log(Model.item);</script>
 <div class="container">
 {{> nav-partial}}
 <main>
@@ -18,7 +19,9 @@
             </tr>
             </thead>
             <tbody>
+            {{#each carts}}
             {{> cart-partial}}
+            {{/each}}
             </tbody>
         </table>
         <p><b>Subtotal: €</b>&nbsp;30</p>
