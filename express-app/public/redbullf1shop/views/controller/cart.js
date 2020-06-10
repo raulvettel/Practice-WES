@@ -1,5 +1,10 @@
 Controller.controllers.cart = {};
 
 Controller.controllers.cart.refresh = function (matching) {
-  View.renderer.cart.render({});
+  var context = {};
+  Model.getItems()
+  .then(function(item){
+  context.item = item;
+  View.renderer.cart.render(context);
+});
 }

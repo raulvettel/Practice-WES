@@ -140,6 +140,14 @@ Model.counter = 0;
 
 Model.item = [];
 
+Model.getItems = function () {
+    return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+    resolve(Model.item)
+    }, 1000);
+    });
+}
+
 Model.buy = function (pid) {
     Model.getCar(pid).then(function(result){
         info = result
