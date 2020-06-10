@@ -8,3 +8,11 @@ Controller.controllers.cart.refresh = function (matching) {
   View.renderer.cart.render(context);
 });
 }
+
+Controller.controllers.cart.removeAll = function (pid){
+  Model.removeAllCartItem(pid);
+}
+
+Controller.controllers.cart.removeOne = function (pid){
+  Model.removeOneCartItem(pid);
+}

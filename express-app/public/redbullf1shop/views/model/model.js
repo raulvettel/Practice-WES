@@ -154,7 +154,6 @@ Model.buy = function (pid) {
         Model.getShoppingCart().then(function(result){
             carro = result[0]
             return new Promise(function (resolve, reject) {
-                setTimeout(function () {
                 carro.subtotal = carro.subtotal + info.price;
                 carro.total = carro.total + (carro.tax * info.price);
                 var i = 0;
@@ -164,7 +163,8 @@ Model.buy = function (pid) {
                         pid : info.name,
                         qty : 1,
                         total : info.price,
-                        price: info.price
+                        price: info.price,
+                        id : info.id
                     })
                 }
                 else{
@@ -180,7 +180,8 @@ Model.buy = function (pid) {
                                 pid : info.name,
                                 qty : 1,
                                 total : info.price,
-                                price: info.price
+                                price: info.price,
+                                id : info.id
                             })
                             break;
                         }
@@ -191,7 +192,6 @@ Model.buy = function (pid) {
                 console.log(Model.item)
                 resolve(carro);
                 console.log(carro)
-                }, 1000);
                 });   
         });
     });
@@ -250,4 +250,51 @@ Model.signup = function(userInfo){
             resolve(Controller.controllers.signin.refresh())
         }
     });
+}
+
+
+Model.removeAllCartItem = function (pid){
+
+    return new Promise(function (resolve, reject) {
+        var i = 0;
+        while (i < Model.item.length){
+            if(Model.item[i].id == pid){
+                Model.shoppingCart[0].subtotal -= Model.item[i].price * Model.item[i].qty;
+                Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
+                Model.item.splice(i,1);
+                resolve(Controller.controllers.cart.refresh());
+                console.log(Model.shoppingCart)
+            }
+            i++;
+        }
+    });
+
+}
+
+Model.removeOneCartItem = function (pid){
+
+    return new Promise(function (resolve, reject) {
+        var i = 0;
+        while (i < Model.item.length){
+            if(Model.item[i].id == pid){
+                if(Model.item[i].qty <= 1){
+                    Model.shoppingCart[0].subtotal -= Model.item[i].price;
+                    Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
+                    Model.item.splice(i,1);
+                    resolve(Controller.controllers.cart.refresh());
+                    console.log(Model.shoppingCart)
+                }
+                else{
+                    Model.item[i].qty -= 1;
+                    Model.shoppingCart[0].subtotal -= Model.item[i].price;
+                    Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
+                    resolve(Controller.controllers.cart.refresh());
+                    console.log(Model.shoppingCart)
+                }
+
+            }
+            i++;
+        }
+    });
+
 }
