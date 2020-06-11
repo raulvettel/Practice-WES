@@ -43,7 +43,7 @@
               <p><b>Subtotal: €</b>&nbsp;{{subtotal}}</p>
               <p><b>Tax: €</b>&nbsp;{{tax}}</p>
               <p><b>Total: €</b>&nbsp;{{total}}</p>
-              <div class="d-flex justify-content-end"><a class="btn btn-primary" role="button" onclick = "Controller.controllers.profile.refresh();">
+              <div class="d-flex justify-content-end"><a class="btn btn-primary" role="button" onclick = "Controller.controllers.purchase.function(event); Controller.controllers.profile.refresh();">
                   Checkout
                 </a></div>
             </form>

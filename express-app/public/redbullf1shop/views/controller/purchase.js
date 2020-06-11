@@ -18,8 +18,27 @@ Controller.controllers.purchase.refresh = function (matching) {
     Model.cartItemCount().then(function(items){
       context.items = items;
     context.item = item;
+    context.idUsuario = valores[0].userId;
     View.renderer.purchase.render(context);
     });
   });
 });
+}
+
+Controller.controllers.purchase.function = function(event){  
+  event.preventDefault();
+  
+  Model.getShoppingCart().then(function(params) {
+      var orderInfo = {
+      date : $('#date').val(),
+      address : $('#address').val(),
+      cardNumber : $('#cardNumber').val(),
+      cardHolder : $('#cardHolder').val(),
+      tax : params[0].total - params[0].subtotal,
+      total : params[0].total,
+      subtotal : params[0].subtotal,
+      idUsuario : params[0].userId
+    }
+    Model.checkOut(orderInfo);
+  });
 }

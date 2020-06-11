@@ -91,6 +91,8 @@ Model.users = [];
 
 Model.user= [{}]
 
+Model.orders = [];
+
 Model.signin = function (email, password){
     return new Promise(function (resolve, reject){
         setTimeout(function () {
@@ -245,6 +247,17 @@ Model.signup = function(userInfo){
                 tax: 1.21,
                 total: 0.00
             })
+            Model.orders.push({
+                number : Date.now(),
+                date : undefined,
+                address : undefined,
+                subtotal: undefined,
+                tax : undefined,
+                total : undefined,
+                cardHolder : undefined,
+                cardNumber : undefined
+            })
+
             console.log(Model.shoppingCart)
             resolve(Controller.controllers.signin.refresh())
         }
@@ -301,4 +314,24 @@ Model.removeOneCartItem = function (pid){
 
 }
 
-Model.orders = [];
+Model.checkOut = function (orderInfo){
+
+    return new Promise(function (resolve,reject){
+        var i = 0;
+        while (i < Model.orders.length){
+            if(Model.orders[i].number == orderInfo.idUsuario){
+                Model.orders[i].date = orderInfo.date;
+                Model.orders[i].address = orderInfo.address;
+                Model.orders[i].subtotal = orderInfo.subtotal;
+                Model.orders[i].tax = orderInfo.tax;
+                Model.orders[i].total = orderInfo.total;
+                Model.orders[i].cardHolder = orderInfo.cardHolder;
+                Model.orders[i].cardNumber = orderInfo.cardNumber;
+                resolve(Model.orders[i])
+            }
+            i++;
+        }
+        console.log(Model.orders)
+    });
+
+}
