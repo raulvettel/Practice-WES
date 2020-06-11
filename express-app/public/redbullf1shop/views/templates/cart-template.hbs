@@ -5,7 +5,7 @@
     <div class="row">
         <div class="justify-content-center w-75 mx-auto">
         <h2 class="">Shopping Cart</h2>
-        <p class="text-right"><b>Total €</b>&nbsp;36.3</p>
+        <p class="text-right"><b>Total €</b>&nbsp;{{total}}</p>
         <h2 class="">Items</h2>
         <table class="table">
             <thead>
@@ -18,14 +18,16 @@
             </tr>
             </thead>
             <tbody>
+            {{#if item}}
             {{#each item}}
             {{> cart-partial}}
             {{/each}}
+            {{/if}}
             </tbody>
         </table>
-        <p><b>Subtotal: €</b>&nbsp;30</p>
-        <p><b>Tax: €</b>&nbsp;6.3</p>
-        <p><b>Total: €</b>&nbsp;36.3</p>
+        <p><b>Subtotal: €</b>&nbsp;{{subtotal}}</p>
+        <p><b>Tax: €</b>&nbsp;{{tax}}</p>
+        <p><b>Total: €</b>&nbsp;{{total}}</p>
         <div class="d-flex justify-content-end"> <a class="btn btn-primary" onclick = "Controller.controllers.purchase.refresh();"
             role="button">Purchase</a> </div>
         </div>

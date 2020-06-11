@@ -287,7 +287,6 @@ Model.removeOneCartItem = function (pid){
                 }
                 else{
                     Model.item[i].qty -= 1;
-                    Model.item[i].total = Model.item[i].qty * Model.item[i].price;
                     Model.shoppingCart[0].subtotal -= Model.item[i].price;
                     Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
                     resolve(Controller.controllers.cart.refresh());
@@ -300,3 +299,5 @@ Model.removeOneCartItem = function (pid){
     });
 
 }
+
+module.exports = Model;
