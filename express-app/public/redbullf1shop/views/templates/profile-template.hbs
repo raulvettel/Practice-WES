@@ -4,11 +4,11 @@
         <div class="row">
           <div class="justify-content-center w-75 mx-auto">
               <h2 class="">Profile</h2>
-              <p><b>Name:</b>&nbsp;Name</p>
-              <p><b>Surname:</b>&nbsp;Surname</p>
-              <p><b>Birth:</b>&nbsp;Birth date</p>
-              <p><b>Address:</b>&nbsp;Address</p>
-              <p><b>Email:</b>&nbsp;Email address</p>
+              <p><b>Name:</b>&nbsp;{{name}}</p>
+              <p><b>Surname:</b>&nbsp;{{surname}}</p>
+              <p><b>Birth:</b>&nbsp;{{birth}}</p>
+              <p><b>Address:</b>&nbsp;{{address}}</p>
+              <p><b>Email:</b>&nbsp;{{email}}</p>
               <hr>
               <h2 class="">Order list</h2>
               <table class="table">
@@ -21,7 +21,11 @@
                   </tr>
                 </thead>
                 <tbody>
+                  {{#if orders}}
+                  {{#each orders}}
                   {{> profile-partial}}
+                  {{/each}}
+                  {{/if}}
                 </tbody>
               </table>
             </div>

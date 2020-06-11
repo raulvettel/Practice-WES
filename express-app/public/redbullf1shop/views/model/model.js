@@ -1,13 +1,5 @@
 var Model = {}
 
-Model.cars2 = [{
-    id: '0',
-    name: 'RB 7',
-    description: 'The Red Bull RB7 is a Formula One racing car designed by the Red Bull Racing team for the 2011 Formula One season. It was driven by defending champion Sebastian Vettel and Australian driver Mark Webber. The car was launched at the Circuit Ricardo Tormo in Valencia, Spain on 1 February 2011. Sebastian Vettel was the first driver to test the car.',
-    price: 500,
-    url: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/F1_2011_Test_Jerez_20.jpg'
-    }];
-
 Model.cars = [{
     id: '0',
     name: 'RB 7',
@@ -124,7 +116,7 @@ Model.getUser = function (id) {
     var i = 0;
     while (i < Model.users.length && Model.users[i].id != id) i++;
     if (i < Model.users.length)
-    resolve(Model.user[i])
+    resolve(Model.users[i])
     else
     reject('User not found');
     }, 1000);
@@ -250,6 +242,7 @@ Model.signup = function(userInfo){
             Model.orders.push({
                 number : Date.now(),
                 date : undefined,
+                ident : undefined,
                 address : undefined,
                 subtotal: undefined,
                 tax : undefined,
@@ -319,7 +312,8 @@ Model.checkOut = function (orderInfo){
     return new Promise(function (resolve,reject){
         var i = 0;
         while (i < Model.orders.length){
-            if(Model.orders[i].number == orderInfo.idUsuario){
+            if(Model.orders[i].number == orderInfo.idUsuario && Model.orders[i].ident == undefined){
+                Model.orders[i].ident = Date.now();
                 Model.orders[i].date = orderInfo.date;
                 Model.orders[i].address = orderInfo.address;
                 Model.orders[i].subtotal = orderInfo.subtotal;
@@ -327,11 +321,37 @@ Model.checkOut = function (orderInfo){
                 Model.orders[i].total = orderInfo.total;
                 Model.orders[i].cardHolder = orderInfo.cardHolder;
                 Model.orders[i].cardNumber = orderInfo.cardNumber;
-                resolve(Model.orders[i])
             }
-            i++;
-        }
-        console.log(Model.orders)
-    });
+            else if (Model.orders[i].number == orderInfo.idUsuario){
+                Model.orders.push({
+                ident : Date.now(),
+                date : orderInfo.date,
+                address : orderInfo.address,
+                subtotal : orderInfo.subtotal,
+                tax : orderInfo.tax,
+                total : orderInfo.total,
+                cardHolder : orderInfo.cardHolder,
+                cardNumber : orderInfo.cardNumber
+                })
+            }
+                Model.counter = 0
+                if (Model.shoppingCart[0].userId == orderInfo.idUsuario){
+                    Model.shoppingCart[0].total = 0
+                    Model.shoppingCart[0].subtotal = 0
+                }
+                Model.item = [];
+                i++;
+            }
+            resolve(Model.orders)
+            console.log(Model.orders) 
+        });
+        
+    }
 
+Model.getOrders = function () {
+    return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+    resolve(Model.orders)
+    }, 1000);
+    });
 }
