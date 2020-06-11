@@ -9,8 +9,8 @@
         <button class="btn btn-outline-danger dropdown-toggle btn-sm" type="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">Remove</button>
         <div class="dropdown-menu">
-            <a class="dropdown-item" onclick = "Controller.controllers.cart.removeOne({{id}});">One</a>
-            <a class="dropdown-item" onclick = "Controller.controllers.cart.removeAll({{id}});">All</a>
+            <a class="dropdown-item" onclick = "Controller.controllers.cart.removeOne({{id}}); Controller.controllers.cart.refresh();">One</a>
+            <a class="dropdown-item" onclick = "Controller.controllers.cart.removeAll({{id}}); Controller.controllers.cart.refresh();">All</a>
         </div>
         </div>
     </div>

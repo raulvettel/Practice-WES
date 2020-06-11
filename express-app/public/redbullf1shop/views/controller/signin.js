@@ -1,6 +1,10 @@
 Controller.controllers.signin={};
 Controller.controllers.signin.refresh = function (matching) {
-  View.renderer.signin.render({});
+  Model.cartItemCount().then(function(items){
+    var context = {};
+    context.items = items;
+  View.renderer.signin.render(context);
+  });
 }
 Controller.controllers.signin.goToIndex_clicked=function(event){
   event.preventDefault();

@@ -15,8 +15,11 @@ Controller.controllers.cart.refresh = function (matching) {
       context.total = valores[0].total;
       context.tax = valores[0].total - valores[0].subtotal;
     }
-    context.item = item;
-    View.renderer.cart.render(context);
+    Model.cartItemCount().then(function(items){
+      context.items = items;
+      context.item = item;
+      View.renderer.cart.render(context);
+    });
   });
 });
 }

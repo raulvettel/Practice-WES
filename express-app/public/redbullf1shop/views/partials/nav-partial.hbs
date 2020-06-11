@@ -8,7 +8,7 @@
         <ul class="navbar-nav">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="dropdown01"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shopping Cart&nbsp;<span class="badge badge-dark">0</span></a>
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shopping Cart&nbsp;<span class="badge badge-dark">{{items}}</span></a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
               <a class="dropdown-item" onclick = "Controller.controllers.cart.refresh();">Show Cart</a>
               <a class="dropdown-item" onclick = "Controller.controllers.purchase.refresh();">Purchase</a>

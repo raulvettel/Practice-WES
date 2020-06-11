@@ -4,8 +4,11 @@ Controller.controllers.index.refresh = function (matching) {
   var context = {};
   Model.getCars()
   .then(function(cars){
-  context.cars = cars;
-  View.renderer.index.render(context);
+  Model.cartItemCount().then(function(items){
+    context.items = items;
+    context.cars = cars;    
+    View.renderer.index.render(context);
+  });
   });
 }
 

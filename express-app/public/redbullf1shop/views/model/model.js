@@ -189,7 +189,7 @@ Model.buy = function (pid) {
                         i++;
                     }
                 }
-
+                Model.counter += 1;
                 console.log(Model.item)
                 resolve(carro);
                 console.log(carro)
@@ -201,8 +201,6 @@ Model.buy = function (pid) {
 Model.cartItemCount = function(){
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
-        Model.counter += 1;
-        Model.counter.innerHTML="String"
         resolve(Model.counter)
         }, 1000);
         });
@@ -261,10 +259,10 @@ Model.removeAllCartItem = function (pid){
         while (i < Model.item.length){
             if(Model.item[i].id == pid){
                 Model.shoppingCart[0].subtotal -= Model.item[i].price * Model.item[i].qty;
-                Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
+                Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal;
+                Model.counter -= Model.item[0].qty;
                 Model.item.splice(i,1);
                 resolve(Controller.controllers.cart.refresh());
-                console.log(Model.shoppingCart)
             }
             i++;
         }
@@ -280,7 +278,8 @@ Model.removeOneCartItem = function (pid){
             if(Model.item[i].id == pid){
                 if(Model.item[i].qty <= 1){
                     Model.shoppingCart[0].subtotal -= Model.item[i].price;
-                    Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
+                    Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal;
+                    Model.counter -= 1;
                     Model.item.splice(i,1);
                     resolve(Controller.controllers.cart.refresh());
                     console.log(Model.shoppingCart)
@@ -290,6 +289,7 @@ Model.removeOneCartItem = function (pid){
                     Model.item[i].total = Model.item[i].qty * Model.item[i].price;
                     Model.shoppingCart[0].subtotal -= Model.item[i].price;
                     Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
+                    Model.counter -= 1;
                     resolve(Controller.controllers.cart.refresh());
                     console.log(Model.shoppingCart)
                 }
@@ -300,3 +300,5 @@ Model.removeOneCartItem = function (pid){
     });
 
 }
+
+Model.orders = [];

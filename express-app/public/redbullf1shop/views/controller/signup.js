@@ -1,7 +1,11 @@
 Controller.controllers.signup = {};
 
 Controller.controllers.signup.refresh = function (matching) {
-  View.renderer.signup.render({});
+  Model.cartItemCount().then(function(items){
+    var context = {};
+    context.items = items;
+  View.renderer.signup.render(context);
+  });
 }
 
 Controller.controllers.signup.create = function (event){
