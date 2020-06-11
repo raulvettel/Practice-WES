@@ -307,10 +307,12 @@ Model.removeOneCartItem = function (pid){
 
 }
 
-Model.checkOut = function (orderInfo){
+Model.orderItems = [];
 
+Model.checkOut = function (orderInfo,item){
     return new Promise(function (resolve,reject){
         var i = 0;
+        var x = 0;
         while (i < Model.orders.length){
             if(Model.orders[i].number == orderInfo.idUsuario && Model.orders[i].ident == undefined){
                 Model.orders[i].ident = Date.now();
@@ -321,6 +323,16 @@ Model.checkOut = function (orderInfo){
                 Model.orders[i].total = orderInfo.total;
                 Model.orders[i].cardHolder = orderInfo.cardHolder;
                 Model.orders[i].cardNumber = orderInfo.cardNumber;
+
+                while(x < item.length){
+                    Model.orderItems.push({
+                        id : Date.now(),
+                        qty : item[x].qty,
+                        pid : item[x].pid,
+                        total : item[x].total
+                    });
+                    x++;
+                }
             }
             else if (Model.orders[i].number == orderInfo.idUsuario){
                 Model.orders.push({
@@ -333,6 +345,17 @@ Model.checkOut = function (orderInfo){
                 cardHolder : orderInfo.cardHolder,
                 cardNumber : orderInfo.cardNumber
                 })
+                
+                while(x < item.length){
+                    Model.orderItems.push({
+                        id : Date.now(),
+                        qty : item[x].qty,
+                        pid : item[x].pid,
+                        total : item[x].total
+                    });
+                    x++;
+                }
+
             }
                 Model.counter = 0
                 if (Model.shoppingCart[0].userId == orderInfo.idUsuario){
@@ -348,10 +371,45 @@ Model.checkOut = function (orderInfo){
         
     }
 
+Model.getOrderItems = function (ident) {
+        return new Promise(function (resolve, reject) {
+        var i = 0;
+        var result = [];
+        while (i < Model.orderItems.length){
+            if (Model.orderItems[i].id == ident){
+                result.push({
+                    id : Model.orderItems[i].id,
+                    qty : Model.orderItems[i].qty,
+                    pid : Model.orderItems[i].pid,
+                    total : Model.orderItems[i].total
+                });
+            }
+            if(i == Model.orderItems.length-1){
+                if (result.length > 0) resolve(result)
+                else reject ('Error')
+            }
+            i++;
+        }
+        });
+    }
+
 Model.getOrders = function () {
     return new Promise(function (resolve, reject) {
     setTimeout(function () {
     resolve(Model.orders)
+    }, 1000);
+    });
+}
+
+Model.getOrder = function (ident) {
+    return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+    var i = 0;
+    while (i < Model.orders.length && Model.orders[i].ident != ident) i++;
+    if (i < Model.orders.length)
+    resolve(Model.orders[i])
+    else
+    reject('Order not found');
     }, 1000);
     });
 }

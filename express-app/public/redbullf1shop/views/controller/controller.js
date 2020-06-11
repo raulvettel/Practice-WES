@@ -26,6 +26,9 @@ Controller.router.route = function () {
   }
   else if (matching = path.match(/^\/redbullf1shop\/views\/order$/)) {
     Controller.controllers.order.refresh();
+  }
+  else if (matching = path.match(/^\/redbullf1shop\/views\/order\/(w*)/)) {
+    Controller.controllers.order.refresh1(matching);
   } else {
     console.error('Page not found!');
   }

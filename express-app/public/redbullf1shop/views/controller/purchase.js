@@ -39,6 +39,9 @@ Controller.controllers.purchase.function = function(event){
       subtotal : params[0].subtotal,
       idUsuario : params[0].userId
     }
-    Model.checkOut(orderInfo);
+    Model.getItems().then(function(item){
+      var item = item;
+      Model.checkOut(orderInfo,item);
+    });
   });
 }

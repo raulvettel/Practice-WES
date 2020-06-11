@@ -4,11 +4,11 @@
       <div class="container">
         <div class="row">
           <div class="justify-content-center w-75 mx-auto">
-            <h2 class="">Order Number</h2>
-            <p><b>Date: </b>&nbsp;Date</p>
-            <p><b>Address: </b>&nbsp;Address</p>
-            <p><b>Card number: </b>&nbsp;Number</p>
-            <p><b>Card holder: </b>&nbsp;Owner</p>
+            <h2 class="">Order Number {{ident}}</h2>
+            <p><b>Date: </b>&nbsp;{{date}}</p>
+            <p><b>Address: </b>&nbsp;{{address}}</p>
+            <p><b>Card number: </b>&nbsp;{{cardNumber}}</p>
+            <p><b>Card holder: </b>&nbsp;{{cardHolder}}</p>
             <hr>
             <h2 class="">Products</h2>
             <table class="table">
@@ -20,13 +20,15 @@
                 </tr>
               </thead>
               <tbody>
-                {{> order-partial}}
+                {{#each orderitem}}
+                  {{> order-partial}}
+                  {{/each}}
               </tbody>
             </table>
             <div>
-              <p><b>Subtotal: €</b>&nbsp;Subtotal</p>
-              <p><b>Tax: €</b>&nbsp;Tax</p>
-              <p><b>Total: €</b>&nbsp;Total</p>
+              <p><b>Subtotal: €</b>&nbsp;{{subtotal}}</p>
+              <p><b>Tax: €</b>&nbsp;{{tax}}</p>
+              <p><b>Total: €</b>&nbsp;{{total}}</p>
             </div>
           </div>
 
