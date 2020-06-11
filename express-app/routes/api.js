@@ -24,8 +24,37 @@ router.get('/products/:pid', function (req, res, next) {
     })
     });
 
-router.post('/cars/:email/:password', function (req, res, next) {
-    model.signin(req.params.email, req.params.password)
+router.get('/users/cart', function (req, res, next) {
+    model.getShoppingCart()
+    .then(function (car) { res.json(car); })
+    .catch(function (err) {
+    console.error(err);
+    res.status(500).json(err);
+    })
+    });
+
+router.post('/users/signin', function (req, res, next) {
+    model.signin(req.body.email, req.body.password)
+    .then(function (cars) { res.json(cars); })
+    .catch(function (err) {
+    console.error(err);
+    res.status(500).json(err);
+    })
+    });
+
+router.post('/users/signup', function (req, res, next) {
+    console.log(req.body);
+    var userInfo = {
+        name : req.body.name,
+        surname : req.body.surname,
+        address : req.body.address,
+        birth : req.body.birth,
+        email : req.body.email,
+        password : req.body.password,
+        password2 : req.body.password2
+      }
+    console.log(userInfo)
+    model.signup(userInfo)
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
     console.error(err);
