@@ -53,7 +53,6 @@ router.post('/users/signup', function (req, res, next) {
         password : req.body.password,
         password2 : req.body.password2
       }
-    console.log(userInfo)
     model.signup(userInfo)
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
