@@ -22,34 +22,36 @@ Model.getCar = function (pid) {
     });
 }
 
+Model.signin = function (email, password){
+    return new Promise(function (resolve, reject) {
+    $.ajax({
+    url: '/webapp/api/users/signin',
+    method: 'POST',
+    data: {email,password}
+    })
+    .done(function (books) {Controller.controllers.index.refresh(); resolve(books); })
+    .fail(function (err) {Controller.controllers.signin.refresh(); reject(err); })
+    });
+}
+
+Model.signup = function(userInfo){
+    return new Promise(function (resolve, reject) {
+    $.ajax({
+    url: '/webapp/api/users/signup',
+    method: 'POST',
+    data: userInfo
+    })
+    .done(function (books) {Controller.controllers.signin.refresh(); resolve(books); })
+    .fail(function (err) {Controller.controllers.signup.refresh(); reject(err); })
+    });
+}
+
 Model.users = [];
 
 Model.user= [{}]
 
 Model.orders = [];
 
-Model.signin = function (email, password){
-    return new Promise(function (resolve, reject){
-        setTimeout(function () {
-            var i = 0;
-            while (i < Model.users.length){
-                if (Model.users[i].email == email && Model.users[i].password == password){
-                    Model.user[0].id = Model.users[i].id;
-                    Controller.controllers.index.refresh()
-                    resolve('User found');
-                    console.log('User ok')
-                    break;
-                }
-                else if (i == Model.users.length -1){
-                    reject('User not found');
-                    Controller.controllers.signin.refresh();
-                }
-                i++;
-            } 
-
-        }, 1000);
-    });
-}
 
 Model.shoppingCart = [];
 
@@ -89,7 +91,6 @@ Model.getItems = function () {
 Model.buy = function (pid) {
     Model.getCar(pid).then(function(result){
         info = result
-        console.log(info)
         Model.getShoppingCart().then(function(result){
             carro = result[0]
             return new Promise(function (resolve, reject) {
@@ -142,63 +143,6 @@ Model.cartItemCount = function(){
         resolve(Model.counter)
         }, 1000);
         });
-}
-
-Model.signup = function(userInfo){
-    var x = false;
-    return new Promise(function (resolve, reject) {
-        if (userInfo.name.length < 1 || userInfo.address.length < 1 || userInfo.birth.length < 1 || userInfo.email.length < 1 ||
-            userInfo.surname.length < 1 || userInfo.password.length < 1 || userInfo.password2.length < 1){
-                reject('All fields must be completed');
-                Controller.controllers.signup.refresh();
-                x = true;
-            }
-        var i = 0
-        while (i < Model.users.length){
-            if (Model.users[i].email == userInfo.email){
-                reject('This email is already exits');
-                Controller.controllers.signup.refresh();
-                x = true;
-            }
-            i++;
-        }
-        if(userInfo.password != userInfo.password2){
-            reject('Passwords dont match')
-            Controller.controllers.signup.refresh();
-            x = true;
-        }
-        if(x == false){
-            Model.users.push({
-                id: Date.now(), 
-                name: userInfo.name,
-                surname: userInfo.surname,
-                email: userInfo.email,
-                birth: userInfo.birth,
-                address: userInfo.address,
-                password: userInfo.password
-            })
-            Model.shoppingCart.push({
-                userId: Date.now(),
-                subtotal: 0.00,
-                tax: 1.21,
-                total: 0.00
-            })
-            Model.orders.push({
-                number : Date.now(),
-                date : undefined,
-                ident : undefined,
-                address : undefined,
-                subtotal: undefined,
-                tax : undefined,
-                total : undefined,
-                cardHolder : undefined,
-                cardNumber : undefined
-            })
-
-            console.log(Model.shoppingCart)
-            resolve(Controller.controllers.signin.refresh())
-        }
-    });
 }
 
 

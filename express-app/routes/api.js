@@ -35,7 +35,7 @@ router.get('/users/cart', function (req, res, next) {
 
 router.post('/users/signin', function (req, res, next) {
     model.signin(req.body.email, req.body.password)
-    .then(function (cars) { res.json(cars); })
+    .then(function (cars) { res.json(cars);  })
     .catch(function (err) {
     console.error(err);
     res.status(500).json(err);

@@ -58,6 +58,20 @@ Model.cars = [{
     url: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/FIA_F1_Austria_2018_Nr._3_Ricciardo.jpg' 
 }];
 
+Model.users = [];
+
+Model.user= [{}]
+
+Model.orders = [];
+
+Model.shoppingCart = [];
+
+Model.counter = 0;
+
+Model.item = [];
+
+Model.orderItems = [];
+
 Model.getCars = function () {
     return new Promise(function (resolve, reject) {
     setTimeout(function () {
@@ -79,14 +93,6 @@ Model.getCar = function (id) {
     });
 }
 
-
-
-Model.users = [];
-
-Model.user= [{}]
-
-Model.orders = [];
-
 Model.signin = function (email, password){
     return new Promise(function (resolve, reject){
         setTimeout(function () {
@@ -100,6 +106,7 @@ Model.signin = function (email, password){
                     break;
                 }
                 else if (i == Model.users.length -1){
+                    console.log('Nollegz')
                     reject('User not found');
                     //Controller.controllers.signin.refresh();
                 }
@@ -110,7 +117,7 @@ Model.signin = function (email, password){
     });
 }
 
-Model.shoppingCart = [];
+
 
 Model.getUser = function (id) {
     return new Promise(function (resolve, reject) {
@@ -132,10 +139,6 @@ Model.getShoppingCart = function () {
     }, 1000);
     });
 }
-
-Model.counter = 0;
-
-Model.item = [];
 
 Model.getItems = function () {
     return new Promise(function (resolve, reject) {
@@ -209,21 +212,18 @@ Model.signup = function(userInfo){
         if (userInfo.name.length < 1 || userInfo.address.length < 1 || userInfo.birth.length < 1 || userInfo.email.length < 1 ||
             userInfo.surname.length < 1 || userInfo.password.length < 1 || userInfo.password2.length < 1){
                 reject('All fields must be completed');
-                Controller.controllers.signup.refresh();
                 x = true;
             }
         var i = 0
         while (i < Model.users.length){
             if (Model.users[i].email == userInfo.email){
                 reject('This email is already exits');
-                Controller.controllers.signup.refresh();
                 x = true;
             }
             i++;
         }
         if(userInfo.password != userInfo.password2){
             reject('Passwords dont match')
-            Controller.controllers.signup.refresh();
             x = true;
         }
         if(x == false){
@@ -255,7 +255,6 @@ Model.signup = function(userInfo){
             })
 
             console.log(Model.shoppingCart)
-            //Controller.controllers.signin.refresh()
             resolve('Correcto')
         }
     });
@@ -311,7 +310,6 @@ Model.removeOneCartItem = function (pid){
 
 }
 
-Model.orderItems = [];
 
 Model.checkOut = function (orderInfo,item){
     return new Promise(function (resolve,reject){
