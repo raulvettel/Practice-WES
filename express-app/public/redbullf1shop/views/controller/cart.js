@@ -20,7 +20,6 @@ Controller.controllers.cart.refresh = function (matching) {
       Model.cartItemCount().then(function(items){
         context.items = items;
         context.item = item;
-        console.log(context)
         View.renderer.cart.render(context);
       });
     });

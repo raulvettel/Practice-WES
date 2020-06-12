@@ -124,8 +124,8 @@ Model.getUser = function (id) {
             resolve(Model.users[i])
             break;
         } 
-        else if (i == Model.users.length-1){            
-            reject('User not found');
+        else if (i == Model.users.length-1 ){   
+            reject('User not found 2');
         }
         i++;  
     
@@ -135,8 +135,6 @@ Model.getUser = function (id) {
 }
 
 Model.getShoppingCart = function (uid) {
-    console.log(Model.shoppingCart)
-    console.log(uid)
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
         var i = 0;
@@ -165,7 +163,6 @@ Model.getItems = function () {
 Model.getUserLogged = function () {
     return new Promise(function (resolve, reject) {
     setTimeout(function () {
-    console.log(Model.user[0].id)
     resolve(Model.user[0].id)
     }, 200);
     });
@@ -174,10 +171,8 @@ Model.getUserLogged = function () {
 Model.buy = function (pid) {
     Model.getCar(pid).then(function(result){
         info = result
-        console.log()
         Model.getShoppingCart(Model.user[0].id).then(function(result){
             carro = result
-            console.log(carro)
             return new Promise(function (resolve, reject) {
                 carro.subtotal = carro.subtotal + info.price;
                 carro.total = carro.total + (carro.tax * info.price);
@@ -214,9 +209,7 @@ Model.buy = function (pid) {
                     }
                 }
                 Model.counter += 1;
-                console.log(Model.item)
                 resolve(carro);
-                console.log(carro)
                 });   
         });
     });
@@ -232,7 +225,6 @@ Model.cartItemCount = function(){
 
 Model.signup = function(userInfo){
     var x = false;
-    console.log(userInfo)
     return new Promise(function (resolve, reject) {
         if (userInfo.name.length < 1 || userInfo.address.length < 1 || userInfo.birth.length < 1 || userInfo.email.length < 1 ||
             userInfo.surname.length < 1 || userInfo.password.length < 1 || userInfo.password2.length < 1){
@@ -279,7 +271,6 @@ Model.signup = function(userInfo){
                 cardNumber : undefined
             })
 
-            console.log(Model.orders)
             resolve('Correcto')
         }
     });
@@ -314,7 +305,6 @@ Model.removeOneCartItem = function (pid){
                     Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal;
                     Model.counter -= 1;
                     Model.item.splice(i,1);
-                    console.log(Model.shoppingCart)
                 }
                 else{
                     Model.item[i].qty -= 1;
@@ -322,7 +312,6 @@ Model.removeOneCartItem = function (pid){
                     Model.shoppingCart[0].subtotal -= Model.item[i].price;
                     Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
                     Model.counter -= 1;
-                    console.log(Model.shoppingCart)
                 }
 
             }
@@ -390,7 +379,6 @@ Model.checkOut = function (orderInfo,item){
                 i++;
             }
             resolve(Model.orders)
-            console.log(Model.orders) 
         });
         
     }
@@ -399,6 +387,10 @@ Model.getOrderItems = function (ident) {
         return new Promise(function (resolve, reject) {
         var i = 0;
         var result = [];
+        if(Model.orderItems.length < 1){
+            resolve (Model.orderItems)
+        }
+        else{
         while (i < Model.orderItems.length){
             if (Model.orderItems[i].id == ident){
                 result.push({
@@ -414,14 +406,14 @@ Model.getOrderItems = function (ident) {
             }
             i++;
         }
+    }
         });
     }
 
 Model.getOrders = function () {
     return new Promise(function (resolve, reject) {
     setTimeout(function () {
-    console.log(Model.orders)
-    resolve(Model.orders)
+        resolve(Model.orders)
     }, 200);
     });
 }

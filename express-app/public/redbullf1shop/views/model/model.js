@@ -30,7 +30,7 @@ Model.signin = function (email, password){
     data: {email,password}
     })
     .done(function (books) {Controller.controllers.index.refresh(); resolve(books); })
-    .fail(function (err) {console.log(err);Controller.controllers.signin.refresh(); reject(err); })
+    .fail(function (err) {Controller.controllers.signin.refresh(); reject(err); })
     });
 }
 
@@ -173,7 +173,7 @@ Model.getOrderItems = function (ident) {
 Model.getOrders = function () {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/orders1',
+    url: '/webapp/api/order',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -192,7 +192,7 @@ Model.getOrder = function (ident) {
     });
 }
 
-Model.getOrder = function (ident) {
+Model.getOrderItems = function (ident) {
     return new Promise(function (resolve, reject) {
     $.ajax({
     url: '/webapp/api/users/orders/' + ident + '/items',

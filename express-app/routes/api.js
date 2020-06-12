@@ -142,9 +142,9 @@ router.post('/users/orders', function (req, res, next) {
     })
     });
 
-router.get('/users/orders1', function (req, res, next) {
+router.get('/order', function (req, res, next) {
     model.getOrders()
-    .then(function (car) { console.log(car); res.json(car); })
+    .then(function (cars) { res.json(cars); })
     .catch(function (err) {
     console.error(err);
     res.status(500).json(err);
