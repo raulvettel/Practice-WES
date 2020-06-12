@@ -49,7 +49,7 @@ Model.signup = function(userInfo){
 Model.getUser = function (id) {
     return new Promise(function (resolve, reject) {
         $.ajax({
-        url: '/webapp/users/' + id,
+        url: '/webapp/api/users/' + id,
         method: 'GET'
         })
         .done(function (products) { resolve(products); })
@@ -60,7 +60,7 @@ Model.getUser = function (id) {
 Model.getShoppingCart = function (uid) {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/cart/' + uid,
+    url: '/webapp/api/users/' + uid + '/cart',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -82,7 +82,7 @@ Model.getItems = function () {
 Model.getUserLogged = function () {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/userLogged/',
+    url: '/webapp/api/users/userLogged',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -104,7 +104,7 @@ Model.buy = function (pid) {
 Model.cartItemCount = function(){
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/cart/itemCount/',
+    url: '/webapp/api/cart/itemCount',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -173,7 +173,7 @@ Model.getOrderItems = function (ident) {
 Model.getOrders = function () {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/orders/',
+    url: '/webapp/api/users/orders1',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })

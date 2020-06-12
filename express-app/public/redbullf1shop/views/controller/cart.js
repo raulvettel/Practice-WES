@@ -5,20 +5,22 @@ Controller.controllers.cart.refresh = function (matching) {
   Model.getItems()
   .then(function(item){
   Model.getUserLogged().then(function(uid) {
-    Model.getShoppingCart().then(function(valores){
+    Model.getShoppingCart(uid).then(function(valores){
+      console.log(valores)
       if (valores.length < 1){
         context.subtotal = 0;
         context.total = 0;
         context.tax = 0;
       }
       else{
-        context.subtotal = valores[0].subtotal;
-        context.total = valores[0].total;
-        context.tax = valores[0].total - valores[0].subtotal;
+        context.subtotal = valores.subtotal;
+        context.total = valores.total;
+        context.tax = valores.total - valores.subtotal;
       }
       Model.cartItemCount().then(function(items){
         context.items = items;
         context.item = item;
+        console.log(context)
         View.renderer.cart.render(context);
       });
     });

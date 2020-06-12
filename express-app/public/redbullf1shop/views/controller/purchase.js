@@ -12,14 +12,14 @@ Controller.controllers.purchase.refresh = function (matching) {
         context.tax = 0;
       }
       else{
-        context.subtotal = valores[0].subtotal;
-        context.total = valores[0].total;
-        context.tax = valores[0].total - valores[0].subtotal;
+        context.subtotal = valores.subtotal;
+        context.total = valores.total;
+        context.tax = valores.total - valores.subtotal;
       }
       Model.cartItemCount().then(function(items){
         context.items = items;
       context.item = item;
-      context.idUsuario = valores[0].userId;
+      context.idUsuario = valores.userId;
       View.renderer.purchase.render(context);
       });
     });    
@@ -37,10 +37,10 @@ Controller.controllers.purchase.function = function(event){
       address : $('#address').val(),
       cardNumber : $('#cardNumber').val(),
       cardHolder : $('#cardHolder').val(),
-      tax : params[0].total - params[0].subtotal,
-      total : params[0].total,
-      subtotal : params[0].subtotal,
-      idUsuario : params[0].userId
+      tax : params.total - params.subtotal,
+      total : params.total,
+      subtotal : params.subtotal,
+      idUsuario : params.userId
     }
     Model.getItems().then(function(item){
       var item = item;

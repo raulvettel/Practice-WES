@@ -89,7 +89,7 @@ router.get('/users/userLogged', function (req, res, next) {
     });
 
 router.get('/users/:id', function (req, res, next) {
-    model.getUser(req.params.pid)
+    model.getUser(req.params.id)
     .then(function (car) { res.json(car); })
     .catch(function (err) {
     console.error(err);
@@ -142,9 +142,9 @@ router.post('/users/orders', function (req, res, next) {
     })
     });
 
-router.get('/users/orders', function (req, res, next) {
+router.get('/users/orders1', function (req, res, next) {
     model.getOrders()
-    .then(function (car) { res.json(car); })
+    .then(function (car) { console.log(car); res.json(car); })
     .catch(function (err) {
     console.error(err);
     res.status(500).json(err);
