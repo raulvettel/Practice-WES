@@ -100,15 +100,12 @@ Model.signin = function (email, password){
             while (i < Model.users.length){
                 if (Model.users[i].email == email && Model.users[i].password == password){
                     Model.user[0].id = Model.users[i].id;
-                    //Controller.controllers.index.refresh()
                     resolve('User found');
-                    console.log('User ok')
                     break;
                 }
                 else if (i == Model.users.length -1){
                     console.log('Nollegz')
                     reject('User not found');
-                    //Controller.controllers.signin.refresh();
                 }
                 i++;
             } 
@@ -132,10 +129,16 @@ Model.getUser = function (id) {
     });
 }
 
-Model.getShoppingCart = function () {
+Model.getShoppingCart = function (uid) {
     return new Promise(function (resolve, reject) {
     setTimeout(function () {
-    resolve(Model.shoppingCart)
+    var i = 0;
+    console.log(uid)
+    while (i < Model.shoppingCart.length && Model.shoppingCart[i].userId != uid) i++;
+    if (i < Model.shoppingCart.length)
+    resolve(Model.shoppingCart[i])
+    else
+    reject('Shopping Cart not found');
     }, 1000);
     });
 }
@@ -148,11 +151,20 @@ Model.getItems = function () {
     });
 }
 
+Model.getUserLogged = function () {
+    return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+    console.log(Model.user[0].id)
+    resolve(Model.user[0].id)
+    }, 1000);
+    });
+}
+
 Model.buy = function (pid) {
     Model.getCar(pid).then(function(result){
         info = result
-        Model.getShoppingCart().then(function(result){
-            carro = result[0]
+        Model.getShoppingCart(Model.user[0].id).then(function(result){
+            carro = result
             return new Promise(function (resolve, reject) {
                 carro.subtotal = carro.subtotal + info.price;
                 carro.total = carro.total + (carro.tax * info.price);
@@ -271,7 +283,6 @@ Model.removeAllCartItem = function (pid){
                 Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal;
                 Model.counter -= Model.item[0].qty;
                 Model.item.splice(i,1);
-                resolve(Controller.controllers.cart.refresh());
             }
             i++;
         }
@@ -290,7 +301,6 @@ Model.removeOneCartItem = function (pid){
                     Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal;
                     Model.counter -= 1;
                     Model.item.splice(i,1);
-                    resolve(Controller.controllers.cart.refresh());
                     console.log(Model.shoppingCart)
                 }
                 else{
@@ -299,7 +309,6 @@ Model.removeOneCartItem = function (pid){
                     Model.shoppingCart[0].subtotal -= Model.item[i].price;
                     Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
                     Model.counter -= 1;
-                    resolve(Controller.controllers.cart.refresh());
                     console.log(Model.shoppingCart)
                 }
 
