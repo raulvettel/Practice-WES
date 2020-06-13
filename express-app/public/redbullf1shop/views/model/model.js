@@ -137,13 +137,17 @@ Model.removeOneCartItem = function (pid){
 }
 
 Model.checkOut = function (orderInfo,item){
+    var ret = {
+        orderInfo : JSON.stringify(orderInfo),
+        item : JSON.stringify(item)
+    }
     return new Promise(function (resolve, reject) {
         $.ajax({
         url: '/webapp/api/users/orders/',
         method: 'POST',
-        data: {orderInfo,item}
+        data: ret
         })
-        .done(function (books) {Controller.controllers.index.refresh(); resolve(books); })
+        .done(function (books) {Controller.controllers.profile.refresh(); resolve(books); })
         .fail(function (err) {reject(err); })
         });
 }

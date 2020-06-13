@@ -125,16 +125,18 @@ router.delete('/users/cart/items/:pid/decrease', function (req, res, next) {
     });
 
 router.post('/users/orders', function (req, res, next) {
+    var aux = JSON.parse(req.body.orderInfo)
     var userInfo = {
-        name : req.body.name,
-        surname : req.body.surname,
-        address : req.body.address,
-        birth : req.body.birth,
-        email : req.body.email,
-        password : req.body.password,
-        password2 : req.body.password2
+        date : aux.date,
+        address : aux.address,
+        cardNumber : aux.cardNumber,
+        cardHolder : aux.cardHolder,
+        tax : aux.tax,
+        total : aux.total,
+        subtotal : aux.subtotal,
+        idUsuario : aux.idUsuario
         }
-    model.checkOut(userInfo, req.body.item)
+    model.checkOut(userInfo, JSON.parse(req.body.item))
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
     console.error(err);
