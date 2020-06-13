@@ -65,9 +65,9 @@ router.post('/users/cart/items/:pid', function (req, res, next) {
     model.buy(req.params.pid)
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
-    console.error(err);
-    res.status(500).json(err);
-    })
+        console.error(err);
+        res.status(500).json(err);
+        })
     });
     
 router.get('/cart/items', function (req, res, next) {

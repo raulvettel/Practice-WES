@@ -169,15 +169,32 @@ Model.getUserLogged = function () {
 }
 
 Model.buy = function (pid) {
-    Model.getCar(pid).then(function(result){
-        info = result
-        Model.getShoppingCart(Model.user[0].id).then(function(result){
-            carro = result
-            return new Promise(function (resolve, reject) {
-                carro.subtotal = carro.subtotal + info.price;
-                carro.total = carro.total + (carro.tax * info.price);
-                var i = 0;
-                if (Model.item.length < 1){
+    return new Promise(function (resolve, reject) {
+        Model.getCar(pid).then(function(result2){
+            info = result2
+            Model.getShoppingCart(Model.user[0].id).then(function(result){
+                carro = result
+        carro.subtotal = carro.subtotal + info.price;
+        carro.total = carro.total + (carro.tax * info.price);
+        var i = 0;
+        if (Model.item.length < 1){
+            Model.item.push({
+                idCarro : carro.userId,
+                pid : info.name,
+                qty : 1,
+                total : info.price,
+                price: info.price,
+                id : info.id
+            })
+        }
+        else{
+            while (i < Model.item.length){
+                if (Model.item[i].price == info.price){
+                    Model.item[i].qty += 1;
+                    Model.item[i].total = Model.item[i].qty * info.price
+                    break;
+                }
+                else if(i == Model.item.length-1 && Model.item[i].price != info.price){
                     Model.item.push({
                         idCarro : carro.userId,
                         pid : info.name,
@@ -186,33 +203,16 @@ Model.buy = function (pid) {
                         price: info.price,
                         id : info.id
                     })
+                    break;
                 }
-                else{
-                    while (i < Model.item.length){
-                        if (Model.item[i].price == info.price){
-                            Model.item[i].qty += 1;
-                            Model.item[i].total = Model.item[i].qty * info.price
-                            break;
-                        }
-                        else if(i == Model.item.length-1 && Model.item[i].price != info.price){
-                            Model.item.push({
-                                idCarro : carro.userId,
-                                pid : info.name,
-                                qty : 1,
-                                total : info.price,
-                                price: info.price,
-                                id : info.id
-                            })
-                            break;
-                        }
-                        i++;
-                    }
-                }
-                Model.counter += 1;
-                resolve(carro);
-                });   
-        });
-    });
+                i++;
+            }
+        }
+        Model.counter += 1;
+        resolve('Product added!');
+        });   
+});
+});
 }
 
 Model.cartItemCount = function(){
