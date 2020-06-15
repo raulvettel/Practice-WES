@@ -6,8 +6,8 @@ Model.getCars = function () {
     url: '/webapp/api/products',
     method: 'GET'
     })
-    .done(function (products) { resolve(products); })
-    .fail(function (err) { reject(err); })
+    .done(function (products) {console.log(products); resolve(products); })
+    .fail(function (err) {console.log(err); reject(err); })
     });
 };
         
@@ -29,8 +29,8 @@ Model.signin = function (email, password){
     method: 'POST',
     data: {email,password}
     })
-    .done(function (books) {Controller.controllers.index.refresh(); resolve(books); })
-    .fail(function (err) {Controller.controllers.signin.refresh(); reject(err); })
+    .done(function (books) {console.log(books);Controller.controllers.index.refresh(); resolve(books); })
+    .fail(function (err) {console.log(err);Controller.controllers.signin.refresh(); reject(err); })
     });
 }
 

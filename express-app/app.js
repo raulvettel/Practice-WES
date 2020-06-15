@@ -2,7 +2,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+require('./config/db');
+//require('./seeders/user-seeder');
+//require('./seeders/product-seeder');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var viewsRouter= require('./routes/views');

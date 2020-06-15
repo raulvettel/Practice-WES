@@ -4,6 +4,7 @@ Controller.controllers.index.refresh = function (matching) {
   var context = {};
   Model.getCars()
   .then(function(cars){
+    console.log(cars)
   Model.cartItemCount().then(function(items){
     context.items = items;
     context.cars = cars;    
