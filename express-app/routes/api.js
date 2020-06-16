@@ -96,8 +96,8 @@ router.get('/users/:id', function (req, res, next) {
     })
     });
 
-router.get('/cart/itemCount', function (req, res, next) {
-    model.cartItemCount()
+router.get('/cart/itemCount/:uid', function (req, res, next) {
+    model.cartItemCount(req.params.uid)
     .then(function (car) { res.json(car); })
     .catch(function (err) {
     console.error(err);

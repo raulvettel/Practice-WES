@@ -5,12 +5,11 @@ var Carrito = require('../model/shoppingcart')
 var Order = require('../model/order')
 var OrderItems = require('../model/orderItems')
 var ModelItems = require('../model/modelItem')
+var Counter = require('../model/counter')
 var Model = {}
 
 
-Model.user= [{}]
-
-Model.counter = 0;
+Model.user= [{id : "null"}]
 
 
 Model.getCars = function () {
@@ -85,14 +84,14 @@ Model.signup = function(userInfo){
             })
             new User(user).save();
             var carrito = ({
-                userId: Date.now(),
+                userId: user.id,
                 subtotal: 0.00,
                 tax: 1.21,
                 total: 0.00
             })
             new Carrito(carrito).save();
             var order = ({
-                number : Date.now(),
+                number: user.id,
                 date : undefined,
                 ident : undefined,
                 address : undefined,
@@ -103,6 +102,11 @@ Model.signup = function(userInfo){
                 cardNumber : undefined
             })
             new Order(order).save();
+            var counter = ({
+                idUsuario: user.id,
+                number : 0
+            })
+            new Counter(counter).save();
             resolve('Correcto')
         }
     });
@@ -131,7 +135,6 @@ Model.getShoppingCart = function (uid) {
 Model.getItems = function (uid) {
     return new Promise(function (resolve, reject) {
     return ModelItems.find().then(function (items) {
-        console.log(items)
         if (items.length < 1) resolve([])
         else{
             var i = 0;
@@ -213,23 +216,34 @@ Model.buy = function (pid, uid) {
             }
         }
     });
-        Model.counter += 1;
+
+    Counter.find().then(function (contador) {
+        var i = 0;
+        while(i < contador.length){
+            if(contador[i].idUsuario == uid){
+                contador[i].number += 1;
+            Counter(contador[i]).save();
+            }
+            i++;
+        }
+        })
         resolve('Product added!');
         });   
 });
 });
 }
 
-Model.cartItemCount = function(){
+Model.cartItemCount = function (id) {
     return new Promise(function (resolve, reject) {
-        setTimeout(function () {
-        resolve(Model.counter)
-        }, 200);
+        return Counter.findOne({ idUsuario: id })
+        .then(function (car) {
+        if (car == 'null') resolve(0)
+        else resolve(car);
+        })
         });
 }
 
 Model.removeAllCartItem = function (pid,uid){
-    console.log(pid)
     return new Promise(function (resolve, reject) {
         var i = 0;
         ModelItems.find().then(function(item) {
@@ -240,8 +254,13 @@ Model.removeAllCartItem = function (pid,uid){
                 shoppingCart.subtotal -= itemAux.price * itemAux.qty;
                 shoppingCart.total = shoppingCart.tax * shoppingCart.subtotal;
                 Carrito(shoppingCart).save();
-                Model.counter -= itemAux;
-                ModelItems.remove({_id : itemAux._id})
+                Counter.findOne({ idUsuario: uid }).then(function (contador) {
+                contador.number -= itemAux.qty;
+                Counter(contador).save();
+                })
+                ModelItems.findByIdAndRemove(itemAux._id).then(function (err) {
+                    console.log(err)
+                })
                 resolve('Correct')
                 })
             }
@@ -263,9 +282,13 @@ Model.removeOneCartItem = function (pid,uid){
                     Model.getShoppingCart(uid).then(function (shoppingCart) {
                     shoppingCart.subtotal -= itemAux.price;
                     shoppingCart.total = shoppingCart.tax * shoppingCart.subtotal;
-                    Model.counter -= 1;
-                    console.log(itemAux._id)
-                    ModelItems.deleteOne({"_id" : ModelItems(itemAux)})
+                    Counter.findOne({ idUsuario: uid }).then(function (contador) {
+                        contador.number -= 1;
+                        Counter(contador).save();
+                        })
+                    ModelItems.findByIdAndRemove(itemAux._id).then(function (err) {
+                        console.log(err)
+                    })
                     Carrito(shoppingCart).save();
                     });
                     resolve('Correct')
@@ -277,7 +300,10 @@ Model.removeOneCartItem = function (pid,uid){
                     ModelItems(itemAux).save();
                     shoppingCart.subtotal -= itemAux.price;
                     shoppingCart.total = shoppingCart.tax * shoppingCart.subtotal
-                    Model.counter -= 1;
+                    Counter.findOne({ idUsuario: uid }).then(function (contador) {
+                        contador.number -= 1;
+                        Counter(contador).save();
+                        })
                     Carrito(shoppingCart).save();
                     });
                     resolve('Correct')
@@ -347,7 +373,10 @@ Model.checkOut = function (orderInfo,item,uid){
                 
 
             }
-                Model.counter = 0
+                Counter.findOne({ idUsuario: uid }).then(function (contador) {
+                contador.number = 0;
+                Counter(contador).save();
+                })
                 Model.getShoppingCart(Model.user[0].id).then(function (shoppingCart) {
                     if (shoppingCart.userId == orderInfo.idUsuario){
                         shoppingCart.total = 0
@@ -416,7 +445,7 @@ Model.getOrders = function (uid) {
                     }
                     if(i == items.length-1){
                         if (result.length > 0) resolve(result)
-                        else reject ('Error')
+                        else resolve([]);
                     }
                     i++;
                 }

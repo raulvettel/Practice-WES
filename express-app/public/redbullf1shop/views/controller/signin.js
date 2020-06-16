@@ -1,10 +1,13 @@
 Controller.controllers.signin={};
 Controller.controllers.signin.refresh = function (matching) {
-  Model.cartItemCount().then(function(items){
+  Model.getUserLogged().then(function(uid) {
+  Model.cartItemCount(uid).then(function(items){
     var context = {};
-    context.items = items;
+    if (items != null) context.items = items.number
+    else context.items = items;
   View.renderer.signin.render(context);
   });
+});
 }
 Controller.controllers.signin.goToIndex_clicked=function(event){
   event.preventDefault();

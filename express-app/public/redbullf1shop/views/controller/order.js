@@ -6,11 +6,13 @@ Controller.controllers.order.refresh1 = function(matching){
 }
 
 Controller.controllers.order.refresh = function (ident) {  
-  Model.cartItemCount().then(function(items){
+
     Model.getUserLogged().then(function (uid) {
+      Model.cartItemCount(uid).then(function(items){
     Model.getOrder(ident,uid).then(function(order) {
       var context = {};
-      context.items = items;
+      if (items != null) context.items = items.number
+      else context.items = items;
       context.total = order[0].total;
       context.subtotal = order[0].subtotal;
       context.tax = order[0].tax;

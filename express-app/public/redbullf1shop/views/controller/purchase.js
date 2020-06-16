@@ -16,8 +16,9 @@ Controller.controllers.purchase.refresh = function (matching) {
         context.total = valores.total;
         context.tax = valores.total - valores.subtotal;
       }
-      Model.cartItemCount().then(function(items){
-        context.items = items;
+      Model.cartItemCount(uid).then(function(items){
+        if (items != null) context.items = items.number
+        else context.items = items;
       context.item = item;
       context.idUsuario = valores.userId;
       View.renderer.purchase.render(context);

@@ -6,7 +6,6 @@ Controller.controllers.cart.refresh = function (matching) {
   Model.getUserLogged().then(function(uid) {
     Model.getItems(uid).then(function(item){
     Model.getShoppingCart(uid).then(function(valores){
-      console.log(valores)
       if (valores.length < 1){
         context.subtotal = 0;
         context.total = 0;
@@ -17,8 +16,9 @@ Controller.controllers.cart.refresh = function (matching) {
         context.total = valores.total;
         context.tax = valores.total - valores.subtotal;
       }
-      Model.cartItemCount().then(function(items){
-        context.items = items;
+      Model.cartItemCount(uid).then(function(items){
+        if (items != null) context.items = items.number
+        else context.items = items;
         context.item = item;
         View.renderer.cart.render(context);
       });

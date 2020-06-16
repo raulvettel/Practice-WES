@@ -101,10 +101,10 @@ Model.buy = function (pid, uid) {
     });
 }
 
-Model.cartItemCount = function(){
+Model.cartItemCount = function(uid){
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/cart/itemCount',
+    url: '/webapp/api/cart/itemCount/' + uid,
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -152,6 +152,7 @@ Model.checkOut = function (orderInfo,item,uid){
 }
 
 Model.getOrders = function (uid) {
+    console.log(uid)
     return new Promise(function (resolve, reject) {
     $.ajax({
     url: '/webapp/api/users/' + uid +'/orders',

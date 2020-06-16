@@ -4,11 +4,14 @@ Controller.controllers.index.refresh = function (matching) {
   var context = {};
   Model.getCars()
   .then(function(cars){
-  Model.cartItemCount().then(function(items){
-    context.items = items;
+    Model.getUserLogged().then(function(uid) {
+  Model.cartItemCount(uid).then(function(items){
+    if (items != null) context.items = items.number
+    else context.items = items;
     context.cars = cars;    
     View.renderer.index.render(context);
   });
+});
   });
 }
 
@@ -21,6 +24,6 @@ Controller.controllers.addProduct.addProduct_clicked = function (event,pid) {
   event.preventDefault();
   Model.getUserLogged().then(function(uid) {
   Model.buy(pid,uid)
-  Model.cartItemCount();
+  Model.cartItemCount(uid);
   });
   }
