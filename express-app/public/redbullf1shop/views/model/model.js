@@ -6,8 +6,8 @@ Model.getCars = function () {
     url: '/webapp/api/products',
     method: 'GET'
     })
-    .done(function (products) {console.log(products); resolve(products); })
-    .fail(function (err) {console.log(err); reject(err); })
+    .done(function (products) {resolve(products); })
+    .fail(function (err) {reject(err); })
     });
 };
         
@@ -29,8 +29,8 @@ Model.signin = function (email, password){
     method: 'POST',
     data: {email,password}
     })
-    .done(function (books) {console.log(books);Controller.controllers.index.refresh(); resolve(books); })
-    .fail(function (err) {console.log(err);Controller.controllers.signin.refresh(); reject(err); })
+    .done(function (books) {Controller.controllers.index.refresh(); resolve(books); })
+    .fail(function (err) {Controller.controllers.signin.refresh(); reject(err); })
     });
 }
 
@@ -68,10 +68,10 @@ Model.getShoppingCart = function (uid) {
     });
 }
 
-Model.getItems = function () {
+Model.getItems = function (uid) {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/cart/items/',
+    url: '/webapp/api/users/' + uid + '/cart/items/',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -90,10 +90,10 @@ Model.getUserLogged = function () {
     });
 }
 
-Model.buy = function (pid) {
+Model.buy = function (pid, uid) {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/cart/items/' + pid,
+    url: '/webapp/api/users/' + uid + '/cart/items/' + pid,
     method: 'POST',
     })
     .done(function (books) {Controller.controllers.index.refresh(); resolve(books); })
@@ -112,10 +112,10 @@ Model.cartItemCount = function(){
     });
 }
 
-Model.removeAllCartItem = function (pid){
+Model.removeAllCartItem = function (pid,uid){
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/cart/items/' + pid,
+    url: '/webapp/api/users/'+uid+'/cart/items/' + pid,
     method: 'DELETE'
     })
     .done(function (products) {resolve(Controller.controllers.cart.refresh()); resolve(products); })
@@ -123,11 +123,10 @@ Model.removeAllCartItem = function (pid){
     });
 }
 
-Model.removeOneCartItem = function (pid){
-
+Model.removeOneCartItem = function (pid,uid){
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/cart/items/' + pid + '/decrease',
+    url: '/webapp/api/users/' + uid+'/cart/items/' + pid + '/decrease',
     method: 'DELETE'
     })
     .done(function (products) {resolve(Controller.controllers.cart.refresh()); resolve(products); })
@@ -136,14 +135,14 @@ Model.removeOneCartItem = function (pid){
     
 }
 
-Model.checkOut = function (orderInfo,item){
+Model.checkOut = function (orderInfo,item,uid){
     var ret = {
         orderInfo : JSON.stringify(orderInfo),
         item : JSON.stringify(item)
     }
     return new Promise(function (resolve, reject) {
         $.ajax({
-        url: '/webapp/api/users/orders/',
+        url: '/webapp/api/users/' + uid+ '/orders/',
         method: 'POST',
         data: ret
         })
@@ -152,32 +151,10 @@ Model.checkOut = function (orderInfo,item){
         });
 }
 
-Model.getOrderItems = function (ident) {
-        return new Promise(function (resolve, reject) {
-        var i = 0;
-        var result = [];
-        while (i < Model.orderItems.length){
-            if (Model.orderItems[i].id == ident){
-                result.push({
-                    id : Model.orderItems[i].id,
-                    qty : Model.orderItems[i].qty,
-                    pid : Model.orderItems[i].pid,
-                    total : Model.orderItems[i].total
-                });
-            }
-            if(i == Model.orderItems.length-1){
-                if (result.length > 0) resolve(result)
-                else reject ('Error')
-            }
-            i++;
-        }
-        });
-    }
-
-Model.getOrders = function () {
+Model.getOrders = function (uid) {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/order',
+    url: '/webapp/api/users/' + uid +'/orders',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -185,10 +162,10 @@ Model.getOrders = function () {
     });
 }
 
-Model.getOrder = function (ident) {
+Model.getOrder = function (ident,uid) {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/orders/' + ident,
+    url: '/webapp/api/users/' + uid + '/orders/' + ident,
     method: 'GET'
     })
     .done(function (products) { resolve(products); })
@@ -196,10 +173,10 @@ Model.getOrder = function (ident) {
     });
 }
 
-Model.getOrderItems = function (ident) {
+Model.getOrderItems = function (ident,uid) {
     return new Promise(function (resolve, reject) {
     $.ajax({
-    url: '/webapp/api/users/orders/' + ident + '/items',
+    url: '/webapp/api/users/' + uid + '/orders/' + ident + '/items',
     method: 'GET'
     })
     .done(function (products) { resolve(products); })

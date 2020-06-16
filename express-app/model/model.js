@@ -1,23 +1,17 @@
 const { use } = require("../routes/api");
 var Car = require('./car');
 var User = require('../model/user')
-
+var Carrito = require('../model/shoppingcart')
+var Order = require('../model/order')
+var OrderItems = require('../model/orderItems')
+var ModelItems = require('../model/modelItem')
 var Model = {}
-Model.cars = [];
 
-Model.users = [];
 
 Model.user= [{}]
 
-Model.orders = [];
-
-Model.shoppingCart = [];
-
 Model.counter = 0;
 
-Model.item = [];
-
-Model.orderItems = [];
 
 Model.getCars = function () {
     return Car.find();
@@ -25,7 +19,7 @@ Model.getCars = function () {
         
 Model.getCar = function (id) {
     return new Promise(function (resolve, reject) {
-        return Car.findOne({ _id: id })
+        return Car.findOne({ idAux: id })
         .then(function (car) {
         if (!car) reject('Car not found');
         else resolve(car);
@@ -34,13 +28,15 @@ Model.getCar = function (id) {
 }
 
 Model.signin = function (email2, password) {
- return new Promise(function (resolve, reject) {
+return new Promise(function (resolve, reject) {
  return User.findOne({ email: email2 })
  .then(function (user) {
-    console.log(user)
  if (!user) reject('Email not found');
  else if (user.password != password) reject('Password mismatch')
- else resolve(user.id);
+ else{
+     Model.user[0].id = user.id
+    resolve(user);
+ } 
  })
  });
  }
@@ -48,48 +44,120 @@ Model.signin = function (email2, password) {
 
 Model.getUser = function (id) {
     return new Promise(function (resolve, reject) {
-    setTimeout(function () {
-    var i = 0;
-    while (i < Model.users.length){
-        if (Model.users[i].id == id){
-            resolve(Model.users[i])
-            break;
-        } 
-        else if (i == Model.users.length-1 ){   
-            reject('User not found 2');
+        return User.findOne({ id: id })
+        .then(function (user) {
+        if (!user) reject('User not found');
+        else resolve(user);
+        })
+        });
+}
+Model.signup = function(userInfo){
+    var x = false;
+    return new Promise(function (resolve, reject) {
+        if (userInfo.name.length < 1 || userInfo.address.length < 1 || userInfo.birth.length < 1 || userInfo.email.length < 1 ||
+            userInfo.surname.length < 1 || userInfo.password.length < 1 || userInfo.password2.length < 1){
+                reject('All fields must be completed');
+                x = true;
+            }
+        User.find().then(function (user) {
+        var i = 0
+        while (i < user.length){
+            if (user[i].email == userInfo.email){
+                reject('This email is already exits');
+                x = true;
+            }
+            i++;
         }
-        i++;  
-    
-    }
-    }, 200);    
-    }); 
+    });
+        if(userInfo.password != userInfo.password2){
+            reject('Passwords dont match')
+            x = true;
+        }
+        if(x == false){
+            var user = ({
+                id: Date.now(), 
+                name: userInfo.name,
+                surname: userInfo.surname,
+                email: userInfo.email,
+                birth: userInfo.birth,
+                address: userInfo.address,
+                password: userInfo.password
+            })
+            new User(user).save();
+            var carrito = ({
+                userId: Date.now(),
+                subtotal: 0.00,
+                tax: 1.21,
+                total: 0.00
+            })
+            new Carrito(carrito).save();
+            var order = ({
+                number : Date.now(),
+                date : undefined,
+                ident : undefined,
+                address : undefined,
+                subtotal: undefined,
+                tax : undefined,
+                total : undefined,
+                cardHolder : undefined,
+                cardNumber : undefined
+            })
+            new Order(order).save();
+            resolve('Correcto')
+        }
+    });
 }
 
 Model.getShoppingCart = function (uid) {
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
+        Carrito.find().then(function (shoppingCart) {
         var i = 0;
-        while (i < Model.shoppingCart.length){
-            if (Model.shoppingCart[i].userId == uid){
-                resolve(Model.shoppingCart[i])
+        while (i < shoppingCart.length){
+            if (shoppingCart[i].userId == uid){
+                resolve(shoppingCart[i])
             } 
-            else if (i == Model.shoppingCart.length-1){            
+            else if (i == shoppingCart.length-1){            
                 reject('Cart not found');
             }
             i++;  
         
         }
+      });
         }, 200);    
         }); 
 }
 
-Model.getItems = function () {
+Model.getItems = function (uid) {
     return new Promise(function (resolve, reject) {
-    setTimeout(function () {
-    resolve(Model.item)
-    }, 200);
+    return ModelItems.find().then(function (items) {
+        console.log(items)
+        if (items.length < 1) resolve([])
+        else{
+            var i = 0;
+            var result = [];
+            while (i < items.length){
+                if(items[i].idCarro == uid){
+                    result.push({
+                        idCarro: items[i].idCarro,
+                        pid : items[i].pid,
+                        qty : items[i].qty,
+                        total : items[i].total,
+                        price : items[i].price,
+                        id : items[i].id
+                    })
+                }
+                if(i == items.length-1){
+                    if (result.length > 0) resolve(result)
+                    else reject ('Error')
+                }
+                i++;
+            }
+        }
+        });
     });
 }
+
 
 Model.getUserLogged = function () {
     return new Promise(function (resolve, reject) {
@@ -99,46 +167,52 @@ Model.getUserLogged = function () {
     });
 }
 
-Model.buy = function (pid) {
+Model.buy = function (pid, uid) {
     return new Promise(function (resolve, reject) {
         Model.getCar(pid).then(function(result2){
             info = result2
-            Model.getShoppingCart(Model.user[0].id).then(function(result){
-                carro = result
+            Model.getShoppingCart(uid).then(function(result){
+            carro = result
         carro.subtotal = carro.subtotal + info.price;
         carro.total = carro.total + (carro.tax * info.price);
+        Carrito(carro).save();
+        ModelItems.find().then(function (item) {
         var i = 0;
-        if (Model.item.length < 1){
-            Model.item.push({
+        if (item.length < 1){
+            var mItem = ({
                 idCarro : carro.userId,
                 pid : info.name,
                 qty : 1,
                 total : info.price,
                 price: info.price,
-                id : info.id
+                id : info.idAux
             })
+            ModelItems(mItem).save();
         }
         else{
-            while (i < Model.item.length){
-                if (Model.item[i].price == info.price){
-                    Model.item[i].qty += 1;
-                    Model.item[i].total = Model.item[i].qty * info.price
+            while (i < item.length){
+                if (item[i].price == info.price){
+                    item[i].qty += 1;
+                    item[i].total = item[i].qty * info.price
+                    ModelItems(item[i]).save();
                     break;
                 }
-                else if(i == Model.item.length-1 && Model.item[i].price != info.price){
-                    Model.item.push({
+                else if(i == item.length-1 && item[i].price != info.price){
+                    var mItem = ({
                         idCarro : carro.userId,
                         pid : info.name,
                         qty : 1,
                         total : info.price,
                         price: info.price,
-                        id : info.id
+                        id : info.idAux
                     })
+                    ModelItems(mItem).save();
                     break;
                 }
                 i++;
             }
         }
+    });
         Model.counter += 1;
         resolve('Product added!');
         });   
@@ -154,132 +228,101 @@ Model.cartItemCount = function(){
         });
 }
 
-Model.signup = function(userInfo){
-    var x = false;
-    return new Promise(function (resolve, reject) {
-        if (userInfo.name.length < 1 || userInfo.address.length < 1 || userInfo.birth.length < 1 || userInfo.email.length < 1 ||
-            userInfo.surname.length < 1 || userInfo.password.length < 1 || userInfo.password2.length < 1){
-                reject('All fields must be completed');
-                x = true;
-            }
-        var i = 0
-        while (i < Model.users.length){
-            if (Model.users[i].email == userInfo.email){
-                reject('This email is already exits');
-                x = true;
-            }
-            i++;
-        }
-        if(userInfo.password != userInfo.password2){
-            reject('Passwords dont match')
-            x = true;
-        }
-        if(x == false){
-            Model.users.push({
-                id: Date.now(), 
-                name: userInfo.name,
-                surname: userInfo.surname,
-                email: userInfo.email,
-                birth: userInfo.birth,
-                address: userInfo.address,
-                password: userInfo.password
-            })
-            Model.shoppingCart.push({
-                userId: Date.now(),
-                subtotal: 0.00,
-                tax: 1.21,
-                total: 0.00
-            })
-            Model.orders.push({
-                number : Date.now(),
-                date : undefined,
-                ident : undefined,
-                address : undefined,
-                subtotal: undefined,
-                tax : undefined,
-                total : undefined,
-                cardHolder : undefined,
-                cardNumber : undefined
-            })
-
-            resolve('Correcto')
-        }
-    });
-}
-
-
-Model.removeAllCartItem = function (pid){
-
+Model.removeAllCartItem = function (pid,uid){
+    console.log(pid)
     return new Promise(function (resolve, reject) {
         var i = 0;
-        while (i < Model.item.length){
-            if(Model.item[i].id == pid){
-                Model.shoppingCart[0].subtotal -= Model.item[i].price * Model.item[i].qty;
-                Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal;
-                Model.counter -= Model.item[0].qty;
-                Model.item.splice(i,1);
+        ModelItems.find().then(function(item) {
+        while (i < item.length){
+            var itemAux = item[i]
+            if(item[i].id == pid){
+                Model.getShoppingCart(uid).then(function (shoppingCart) {
+                shoppingCart.subtotal -= itemAux.price * itemAux.qty;
+                shoppingCart.total = shoppingCart.tax * shoppingCart.subtotal;
+                Carrito(shoppingCart).save();
+                Model.counter -= itemAux;
+                ModelItems.remove({_id : itemAux._id})
+                resolve('Correct')
+                })
             }
             i++;
         }
     });
+        });
 
 }
 
-Model.removeOneCartItem = function (pid){
-
+Model.removeOneCartItem = function (pid,uid){
     return new Promise(function (resolve, reject) {
         var i = 0;
-        while (i < Model.item.length){
-            if(Model.item[i].id == pid){
-                if(Model.item[i].qty <= 1){
-                    Model.shoppingCart[0].subtotal -= Model.item[i].price;
-                    Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal;
+        ModelItems.find().then(function(item) {
+        while (i < item.length){
+            if(item[i].id == pid){
+                var itemAux = item[i]
+                if(item[i].qty <= 1){
+                    Model.getShoppingCart(uid).then(function (shoppingCart) {
+                    shoppingCart.subtotal -= itemAux.price;
+                    shoppingCart.total = shoppingCart.tax * shoppingCart.subtotal;
                     Model.counter -= 1;
-                    Model.item.splice(i,1);
+                    console.log(itemAux._id)
+                    ModelItems.deleteOne({"_id" : ModelItems(itemAux)})
+                    Carrito(shoppingCart).save();
+                    });
+                    resolve('Correct')
                 }
                 else{
-                    Model.item[i].qty -= 1;
-                    Model.item[i].total = Model.item[i].qty * Model.item[i].price;
-                    Model.shoppingCart[0].subtotal -= Model.item[i].price;
-                    Model.shoppingCart[0].total = Model.shoppingCart[0].tax * Model.shoppingCart[0].subtotal
+                    Model.getShoppingCart(uid).then(function (shoppingCart) {
+                    itemAux.qty -= 1;
+                    itemAux.total = itemAux.qty * itemAux.price;
+                    ModelItems(itemAux).save();
+                    shoppingCart.subtotal -= itemAux.price;
+                    shoppingCart.total = shoppingCart.tax * shoppingCart.subtotal
                     Model.counter -= 1;
+                    Carrito(shoppingCart).save();
+                    });
+                    resolve('Correct')
                 }
 
             }
             i++;
         }
     });
+    });
 
 }
 
 
-Model.checkOut = function (orderInfo,item){
+Model.checkOut = function (orderInfo,item,uid){
     return new Promise(function (resolve,reject){
         var i = 0;
         var x = 0;
-        while (i < Model.orders.length){
-            if(Model.orders[i].number == orderInfo.idUsuario && Model.orders[i].ident == undefined){
-                Model.orders[i].ident = Date.now();
-                Model.orders[i].date = orderInfo.date;
-                Model.orders[i].address = orderInfo.address;
-                Model.orders[i].subtotal = orderInfo.subtotal;
-                Model.orders[i].tax = orderInfo.tax;
-                Model.orders[i].total = orderInfo.total;
-                Model.orders[i].cardHolder = orderInfo.cardHolder;
-                Model.orders[i].cardNumber = orderInfo.cardNumber;
-
+        Order.find().then(function (orders) {
+        while (i < orders.length){
+            if(orders[i].number == orderInfo.idUsuario && orders[i].ident == undefined){
+                orders[i].ident = Date.now();
+                orders[i].date = orderInfo.date;
+                orders[i].address = orderInfo.address;
+                orders[i].subtotal = orderInfo.subtotal;
+                orders[i].tax = orderInfo.tax;
+                orders[i].total = orderInfo.total;
+                orders[i].cardHolder = orderInfo.cardHolder;
+                orders[i].cardNumber = orderInfo.cardNumber;
+                Order(orders[i]).save();
                 while(x < item.length){
-                    Model.orderItems.push({
-                        id : Date.now(),
+                    var oI = ({
+                        id : orders[i].ident,
                         qty : item[x].qty,
                         pid : item[x].pid,
                         total : item[x].total
                     });
+                    OrderItems(oI).save();
                     x++;
                 }
+                
+                
             }
-            else if (Model.orders[i].number == orderInfo.idUsuario){
-                Model.orders.push({
+            else if (orders[i].number == orderInfo.idUsuario && i == orders.length-1){
+                var order = ({
                 ident : Date.now(),
                 date : orderInfo.date,
                 address : orderInfo.address,
@@ -287,51 +330,59 @@ Model.checkOut = function (orderInfo,item){
                 tax : orderInfo.tax,
                 total : orderInfo.total,
                 cardHolder : orderInfo.cardHolder,
-                cardNumber : orderInfo.cardNumber
+                cardNumber : orderInfo.cardNumber,
+                number : uid
                 })
-                
+                Order(order).save();
                 while(x < item.length){
-                    Model.orderItems.push({
-                        id : Date.now(),
+                    var oI = ({
+                        id : order.ident,
                         qty : item[x].qty,
                         pid : item[x].pid,
                         total : item[x].total
                     });
+                    OrderItems(oI).save();
                     x++;
                 }
+                
 
             }
                 Model.counter = 0
-                if (Model.shoppingCart[0].userId == orderInfo.idUsuario){
-                    Model.shoppingCart[0].total = 0
-                    Model.shoppingCart[0].subtotal = 0
-                }
-                Model.item = [];
+                Model.getShoppingCart(Model.user[0].id).then(function (shoppingCart) {
+                    if (shoppingCart.userId == orderInfo.idUsuario){
+                        shoppingCart.total = 0
+                        shoppingCart.subtotal = 0
+                        Carrito(shoppingCart).save();
+                    }  
+                })
                 i++;
             }
-            resolve(Model.orders)
+            resolve(orders)
+            return ModelItems.deleteMany();
+            })
         });
         
     }
 
-Model.getOrderItems = function (ident) {
+Model.getOrderItems = function (ident,uid) {
         return new Promise(function (resolve, reject) {
         var i = 0;
         var result = [];
-        if(Model.orderItems.length < 1){
-            resolve (Model.orderItems)
+        OrderItems.find().then(function (orderItems) {
+        if(orderItems.length < 1){
+            resolve (orderItems)
         }
         else{
-        while (i < Model.orderItems.length){
-            if (Model.orderItems[i].id == ident){
+        while (i < orderItems.length){
+            if (orderItems[i].id == ident){
                 result.push({
-                    id : Model.orderItems[i].id,
-                    qty : Model.orderItems[i].qty,
-                    pid : Model.orderItems[i].pid,
-                    total : Model.orderItems[i].total
+                    id : orderItems[i].id,
+                    qty : orderItems[i].qty,
+                    pid : orderItems[i].pid,
+                    total : orderItems[i].total
                 });
             }
-            if(i == Model.orderItems.length-1){
+            if(i == orderItems.length-1){
                 if (result.length > 0) resolve(result)
                 else reject ('Error')
             }
@@ -339,27 +390,71 @@ Model.getOrderItems = function (ident) {
         }
     }
         });
+        });
     }
 
-Model.getOrders = function () {
+Model.getOrders = function (uid) {
     return new Promise(function (resolve, reject) {
-    setTimeout(function () {
-        resolve(Model.orders)
-    }, 200);
-    });
+        return Order.find().then(function (items) {
+            if (items.length < 1) resolve([]);
+            else{
+                var i = 0;
+                var result = [];
+                while (i < items.length){
+                    if(items[i].number == uid){
+                        result.push({
+                            number: items[i].number,
+                            address : items[i].address,
+                            cardHolder : items[i].cardHolder,
+                            cardNumber : items[i].cardNumber,
+                            date : items[i].date,
+                            ident : items[i].ident,
+                            subtotal : items[i].subtotal,
+                            tax : items[i].tax,
+                            total : items[i].total
+                        })
+                    }
+                    if(i == items.length-1){
+                        if (result.length > 0) resolve(result)
+                        else reject ('Error')
+                    }
+                    i++;
+                }
+            }
+            });
+        });
 }
 
-Model.getOrder = function (ident) {
+Model.getOrder = function (ident,uid) {
     return new Promise(function (resolve, reject) {
-    setTimeout(function () {
-    var i = 0;
-    while (i < Model.orders.length && Model.orders[i].ident != ident) i++;
-    if (i < Model.orders.length)
-    resolve(Model.orders[i])
-    else
-    reject('Order not found');
-    }, 200);
-    });
+        return Order.find().then(function (items) {
+            if (items.length < 1) resolve([]);
+            else{
+                var i = 0;
+                var result = [];
+                while (i < items.length){
+                    if(items[i].number == uid && items[i].ident == ident){
+                        result.push({
+                            number: items[i].number,
+                            address : items[i].address,
+                            cardHolder : items[i].cardHolder,
+                            cardNumber : items[i].cardNumber,
+                            date : items[i].date,
+                            ident : items[i].ident,
+                            subtotal : items[i].subtotal,
+                            tax : items[i].tax,
+                            total : items[i].total
+                        })
+                    }
+                    if(i == items.length-1){
+                        if (result.length > 0) resolve(result)
+                        else reject ('Error')
+                    }
+                    i++;
+                }
+            }
+            });
+        });
 }
 
 module.exports = Model;

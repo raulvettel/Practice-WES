@@ -2,9 +2,9 @@ Controller.controllers.purchase = {};
 
 Controller.controllers.purchase.refresh = function (matching) {
   var context = {};
-  Model.getItems()
-  .then(function(item){
   Model.getUserLogged().then(function(uid) {
+    Model.getItems(uid)
+  .then(function(item){
     Model.getShoppingCart(uid).then(function(valores){
       if (valores.length < 1){
         context.subtotal = 0;
@@ -42,9 +42,9 @@ Controller.controllers.purchase.function = function(event){
       subtotal : params.subtotal,
       idUsuario : params.userId
     }
-    Model.getItems().then(function(item){
+    Model.getItems(uid).then(function(item){
       var item = item;
-      Model.checkOut(orderInfo,item);
+      Model.checkOut(orderInfo,item,uid);
     });
   });  
   })

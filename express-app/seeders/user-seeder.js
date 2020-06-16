@@ -5,7 +5,7 @@ var user = {
     name : 'Raul',
     surname: 'Alarcon',
     address: 'Albacete 02006',
-    //birth: '30/05/1997',
+    birth: '1997-05-30',
     email: 'raul@email.com',
     password: 'admin'
 };

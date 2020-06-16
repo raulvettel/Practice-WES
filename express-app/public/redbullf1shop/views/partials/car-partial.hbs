@@ -6,7 +6,7 @@
       <h5 class="card-title">{{name}}</h5>
       <p class="card-text">{{description}}</p>
       <div class="d-flex justify-content-end align-items-center">
-        <div class="font-weight-bold display-5">{{priceFormat price}}</div><a onclick="Controller.controllers.addProduct.addProduct_clicked(event, {{_id}}); Controller.controllers.index.refresh();"
+        <div class="font-weight-bold display-5">{{priceFormat price}}</div><a onclick="Controller.controllers.addProduct.addProduct_clicked(event,{{idAux}}); Controller.controllers.index.refresh();"
           class="btn btn-primary btn-lg ml-3">Buy</a>
       </div>
     </div>

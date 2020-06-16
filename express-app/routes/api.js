@@ -43,7 +43,6 @@ router.post('/users/signin', function (req, res, next) {
     });
 
 router.post('/users/signup', function (req, res, next) {
-    console.log(req.body);
     var userInfo = {
         name : req.body.name,
         surname : req.body.surname,
@@ -61,8 +60,8 @@ router.post('/users/signup', function (req, res, next) {
     })
     });
 
-router.post('/users/cart/items/:pid', function (req, res, next) {
-    model.buy(req.params.pid)
+router.post('/users/:uid/cart/items/:pid', function (req, res, next) {
+    model.buy(req.params.pid,req.params.uid)
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
         console.error(err);
@@ -70,8 +69,8 @@ router.post('/users/cart/items/:pid', function (req, res, next) {
         })
     });
     
-router.get('/cart/items', function (req, res, next) {
-    model.getItems()
+router.get('/users/:uid/cart/items', function (req, res, next) {
+    model.getItems(req.params.uid)
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
     console.error(err);
@@ -106,8 +105,8 @@ router.get('/cart/itemCount', function (req, res, next) {
     })
     });
 
-router.delete('/users/cart/items/:pid', function (req, res, next) {
-    model.removeAllCartItem(req.params.pid)
+router.delete('/users/:uid/cart/items/:pid', function (req, res, next) {
+    model.removeAllCartItem(req.params.pid,req.params.uid)
     .then(function (car) { res.json(car); })
     .catch(function (err) {
     console.error(err);
@@ -115,8 +114,8 @@ router.delete('/users/cart/items/:pid', function (req, res, next) {
     })
     });
 
-router.delete('/users/cart/items/:pid/decrease', function (req, res, next) {
-    model.removeOneCartItem(req.params.pid)
+router.delete('/users/:uid/cart/items/:pid/decrease', function (req, res, next) {
+    model.removeOneCartItem(req.params.pid,req.params.uid)
     .then(function (car) { res.json(car); })
     .catch(function (err) {
     console.error(err);
@@ -124,7 +123,7 @@ router.delete('/users/cart/items/:pid/decrease', function (req, res, next) {
     })
     });
 
-router.post('/users/orders', function (req, res, next) {
+router.post('/users/:uid/orders', function (req, res, next) {
     var aux = JSON.parse(req.body.orderInfo)
     var userInfo = {
         date : aux.date,
@@ -136,7 +135,7 @@ router.post('/users/orders', function (req, res, next) {
         subtotal : aux.subtotal,
         idUsuario : aux.idUsuario
         }
-    model.checkOut(userInfo, JSON.parse(req.body.item))
+    model.checkOut(userInfo, JSON.parse(req.body.item),req.params.uid)
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
     console.error(err);
@@ -144,8 +143,8 @@ router.post('/users/orders', function (req, res, next) {
     })
     });
 
-router.get('/order', function (req, res, next) {
-    model.getOrders()
+router.get('/users/:uid/orders', function (req, res, next) {
+    model.getOrders(req.params.uid)
     .then(function (cars) { res.json(cars); })
     .catch(function (err) {
     console.error(err);
@@ -153,8 +152,8 @@ router.get('/order', function (req, res, next) {
     })
     });
 
-router.get('/users/orders/:number', function (req, res, next) {
-    model.getOrder(req.params.number)
+router.get('/users/:uid/orders/:number', function (req, res, next) {
+    model.getOrder(req.params.number,req.params.uid)
     .then(function (car) { res.json(car); })
     .catch(function (err) {
     console.error(err);
@@ -162,8 +161,8 @@ router.get('/users/orders/:number', function (req, res, next) {
     })
     });
 
-router.get('/users/orders/:number/items', function (req, res, next) {
-    model.getOrderItems(req.params.number)
+router.get('/users/:uid/orders/:number/items', function (req, res, next) {
+    model.getOrderItems(req.params.number, req.params.uid)
     .then(function (car) { res.json(car); })
     .catch(function (err) {
     console.error(err);

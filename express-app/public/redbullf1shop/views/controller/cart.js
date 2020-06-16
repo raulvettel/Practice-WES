@@ -2,9 +2,9 @@ Controller.controllers.cart = {};
 
 Controller.controllers.cart.refresh = function (matching) {
   var context = {};
-  Model.getItems()
-  .then(function(item){
+  
   Model.getUserLogged().then(function(uid) {
+    Model.getItems(uid).then(function(item){
     Model.getShoppingCart(uid).then(function(valores){
       console.log(valores)
       if (valores.length < 1){
@@ -28,9 +28,13 @@ Controller.controllers.cart.refresh = function (matching) {
 }
 
 Controller.controllers.cart.removeAll = function (pid){
-  Model.removeAllCartItem(pid);
+  Model.getUserLogged().then(function(uid) {
+  Model.removeAllCartItem(pid,uid);
+  });
 }
 
 Controller.controllers.cart.removeOne = function (pid){
-  Model.removeOneCartItem(pid);
+  Model.getUserLogged().then(function(uid) {
+    Model.removeOneCartItem(pid,uid);
+    });
 }

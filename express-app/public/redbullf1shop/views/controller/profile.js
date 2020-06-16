@@ -8,10 +8,10 @@ Controller.controllers.profile.refresh = function () {
       Model.getUser(uid).then(function(params) {
         context.name = params.name;
         context.surname = params.surname;
-        context.birth = params.birth;
+        context.birth = params.birth.substr(0,10);;
         context.address = params.address;
-        context.email = params.email;        
-        Model.getOrders().then(function(params2) {
+        context.email = params.email;   
+        Model.getOrders(uid).then(function(params2) {
           if (params2[0].ident != undefined) context.orders = params2;
           View.renderer.profile.render(context);
         })
